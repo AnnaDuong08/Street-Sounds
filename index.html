@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tiếng Rao</title>
+<meta name="description" content="Tiếng Rao: an interactive sound-map of Vietnam's street-vendor calls.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+
+<div class="tr-app" data-bs-theme="dark">
+
+<nav class="navbar navbar-expand-md tr-nav" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand" href="#top">Tiếng Rao</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navLinks">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="#walk">Night walk</a></li>
+        <li class="nav-item"><a class="nav-link" href="#change">Hear the change</a></li>
+        <li class="nav-item"><a class="nav-link" href="#mix">Mix your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contribute">Add a call</a></li>
+      </ul>
+      <div class="d-flex gap-2 py-2 py-md-0">
+        <button class="btn btn-sm btn-ghost" id="btnCaptions" type="button" aria-pressed="true">Captions on</button>
+        <button class="btn btn-sm btn-ghost" id="btnMute" type="button" aria-pressed="false">Mute all</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="skyline" aria-hidden="true"></canvas>
+  <div class="container">
+    <p class="label hero-anim mb-2">Vietnam · street-vendor calls · after dark</p>
+    <h1 class="display hero-anim">Tiếng Rao</h1>
+    <p class="sub hero-anim">The sung calls of Vietnam's street vendors, before loudspeakers and delivery apps replace them.</p>
+    <div class="d-flex flex-wrap gap-2 hero-anim">
+      <a class="btn btn-lamp" href="#walk">Start the night walk</a>
+      <a class="btn btn-ghost" href="#mix">Mix your own street</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="band" id="walk" aria-labelledby="walkTitle">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="label mb-1">01 · Walk</p>
+        <h2 class="display" id="walkTitle">Night walk</h2>
+        <p class="lede mb-0">Turn the sound on and scroll along the street. Vendors close to the middle of the screen are loud; the ones further away fade into the background, left and right, like they would in a real alley.</p>
+      </div>
+      <div class="walk-controls">
+        <button class="btn btn-lamp" id="btnWalk" type="button" aria-pressed="false">Sound on: start walking</button>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <ul class="nav region-pills gap-2" id="regionPills" role="tablist" aria-label="Filter by region">
+        <li class="nav-item"><button class="nav-link active" data-region="all" type="button">All regions</button></li>
+        <li class="nav-item"><button class="nav-link" data-region="N" type="button">North</button></li>
+        <li class="nav-item"><button class="nav-link" data-region="C" type="button">Central</button></li>
+        <li class="nav-item"><button class="nav-link" data-region="S" type="button">South</button></li>
+      </ul>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-ghost" id="walkLeft" type="button" aria-label="Walk left">← Walk back</button>
+        <button class="btn btn-sm btn-ghost" id="walkRight" type="button" aria-label="Walk right">Walk on →</button>
+      </div>
+    </div>
+
+    <div class="street-wrap">
+      <div class="street" id="street" tabindex="0" aria-label="Street of vendors. Scroll sideways to walk."></div>
+    </div>
+    <p class="walk-status mt-2" id="walkStatus" aria-live="polite">Sound is off. Press "start walking" or tap any stall to hear its call.</p>
+  </div>
+</section>
+
+<section class="band" id="change" aria-labelledby="changeTitle">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-5">
+        <p class="label mb-1">02 · Listen</p>
+        <h2 class="display" id="changeTitle">Hear the change</h2>
+        <p class="lede">More and more vendors play a recording from a loudspeaker instead of calling themselves. Compare the two. The live voice bends and drifts with the tones of the words. The recording repeats exactly, every time, and the cheap speaker cuts off the warmth.</p>
+        <p class="lede mb-0">Vietnamese is tonal, so the melody of a call comes from the words. This prototype builds each call's melody from the tone marks in its text.</p>
+      </div>
+      <div class="col-lg-7">
+        <div class="panel d-grid gap-3">
+          <div>
+            <label class="form-label" for="changeVendor">Choose a call</label>
+            <select class="form-select" id="changeVendor"></select>
+          </div>
+          <div class="compare">
+            <button class="btn btn-ghost" id="btnLive" type="button"><span>Live voice</span><small>Sung by the vendor, with natural drift</small></button>
+            <button class="btn btn-ghost" id="btnLoud" type="button"><span>Loudspeaker loop</span><small>Recorded once, played on repeat</small></button>
+          </div>
+          <canvas id="scope" aria-hidden="true"></canvas>
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <button class="btn btn-sm btn-ghost" id="btnSpeak" type="button">Hear the words spoken</button>
+            <span class="form-text" id="speakNote">Uses your device's Vietnamese voice, if it has one.</span>
+          </div>
+          <div class="tones" id="changeTones" aria-label="Tones in this call"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="mix" aria-labelledby="mixTitle">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="label mb-1">03 · Play</p>
+        <h2 class="display" id="mixTitle">Mix your street</h2>
+        <p class="lede mb-0">Build your own soundscape. Add vendors and street sounds, then drag them around. The closer a sound is to you, the louder and clearer it gets. There's no score and no timer.</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-lamp" id="btnMixPlay" type="button" aria-pressed="false">Play my street</button>
+        <button class="btn btn-ghost" id="btnMixClear" type="button">Clear</button>
+      </div>
+    </div>
+
+    <div class="mix-grid">
+      <div>
+        <div class="board" id="board" aria-label="Street board. Use Tab to pick a sound and the arrow keys to move it.">
+          <span class="zone" style="top:6%">Rooftops</span>
+          <span class="zone" style="top:28%">Road</span>
+          <span class="zone" style="top:72%">Pavement</span>
+          <div class="listener"><i></i><span>You</span></div>
+        </div>
+        <p class="form-text mt-2 mb-0">Drag a sound to move it. With the keyboard, Tab to a sound, use the arrow keys to move it and press Delete to remove it.</p>
+      </div>
+      <div class="d-grid gap-3 align-content-start">
+        <div class="panel">
+          <p class="label mb-2">Add a vendor</p>
+          <div class="palette" id="paletteVendors"></div>
+          <p class="label mt-3 mb-2">Add a street sound</p>
+          <div class="palette" id="paletteAmbient"></div>
+          <p class="form-text mt-2 mb-0" id="mixCount"></p>
+        </div>
+        <div class="panel">
+          <p class="label mb-2">Save and share</p>
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <button class="btn btn-sm btn-ghost" id="btnMixSave" type="button">Save on this device</button>
+            <button class="btn btn-sm btn-ghost" id="btnMixCopy" type="button">Copy share code</button>
+          </div>
+          <label class="form-label small" for="mixCode">Paste a friend's code</label>
+          <div class="input-group input-group-sm">
+            <input class="form-control share-code" id="mixCode" type="text" placeholder="TR1-…" autocomplete="off">
+            <button class="btn btn-ghost" id="btnMixLoad" type="button">Load</button>
+          </div>
+          <p class="form-text mb-0 mt-2" id="mixMsg" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="contribute" aria-labelledby="contribTitle">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <p class="label mb-1">04 · Share</p>
+        <h2 class="display" id="contribTitle">Add a call from your city</h2>
+        <p class="lede">Every city has its own calls, and many have never been recorded. Tell us about one you know. In the full site, submissions will be reviewed and added to the street.</p>
+        <ul class="sub-list mt-4" id="subList" aria-live="polite"></ul>
+      </div>
+      <div class="col-lg-7">
+        <form class="panel needs-validation" id="contribForm" novalidate>
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="cityInput">City or town</label>
+              <input class="form-control" id="cityInput" type="text" required placeholder="e.g. Hải Phòng">
+              <div class="invalid-feedback">Tell us where you heard it.</div>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="dishInput">What is being sold?</label>
+              <input class="form-control" id="dishInput" type="text" required placeholder="e.g. Bánh mì cay">
+              <div class="invalid-feedback">Name the food or service.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="callInput">The call, in Vietnamese</label>
+              <input class="form-control" id="callInput" type="text" required placeholder="e.g. Ai bánh mì cay đây!">
+              <div class="invalid-feedback">Write the words of the call.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="translationInput">English meaning <span class="text-secondary">(optional)</span></label>
+              <input class="form-control" id="translationInput" type="text" placeholder="e.g. Who wants spicy bread sticks?">
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="audioInput">Recording <span class="text-secondary">(optional)</span></label>
+              <input class="form-control" id="audioInput" type="file" accept="audio/*">
+              <div class="form-text">MP3, M4A or WAV. In this prototype the file stays on your device.</div>
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" id="consentCheck" type="checkbox" required>
+                <label class="form-check-label" for="consentCheck">The vendor was happy to be recorded, or the recording has no identifiable people in it.</label>
+                <div class="invalid-feedback">Please confirm before sending.</div>
+              </div>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn btn-lamp" type="submit">Send the call</button>
+              <button class="btn btn-ghost" type="reset">Clear form</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="accordion mb-4" id="aboutAcc">
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aboutBody" aria-expanded="false" aria-controls="aboutBody">About this prototype</button>
+        </h3>
+        <div id="aboutBody" class="accordion-collapse collapse" data-bs-parent="#aboutAcc">
+          <div class="accordion-body">
+            <p>Tiếng Rao is a CSCU9X5 web design prototype built with HTML5, CSS3, Bootstrap 5 and JavaScript. All sound is generated live with the Web Audio API. Each call's melody follows the six Vietnamese tones of its words (level, rising, falling, dipping, broken and heavy). The final site will replace these placeholders with field recordings, or Creative Commons recordings with credits.</p>
+            <p class="mb-0">Saved mixes and submitted calls are stored only in this browser.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="mb-0"><span class="display" style="color:var(--sodium)">Tiếng Rao</span> · a sound-map of street-vendor calls · CSCU9X5 prototype, 2026</p>
+  </div>
+</footer>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="storyPanel" aria-labelledby="storyTitle">
+  <div class="offcanvas-header">
+    <div>
+      <p class="label mb-1" id="storyRegion"></p>
+      <h2 class="offcanvas-title display h3 mb-0" id="storyTitle"></h2>
+    </div>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-grid gap-3 align-content-start">
+    <div id="storyArt"></div>
+    <div>
+      <p class="mb-0 fs-5 fst-italic" id="storyCall"></p>
+      <p class="text-secondary mb-0" id="storyEn"></p>
+    </div>
+    <button class="btn btn-lamp" id="storyPlay" type="button">Play the call</button>
+    <p class="mb-0" id="storyText"></p>
+    <dl class="story-fact">
+      <dt>Heard</dt><dd id="storyTime"></dd>
+      <dt>Carried on</dt><dd id="storyVehicle"></dd>
+      <dt>Listen for</dt><dd id="storyListen"></dd>
+    </dl>
+    <div class="tones" id="storyTones"></div>
+  </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="margin-top:calc(64px + env(safe-area-inset-top,0px));margin-right:env(safe-area-inset-right,0px)">
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+    <div class="toast-body" id="toastBody"></div>
+  </div>
+</div>
+
+<div class="caption-bar" id="captionBar" aria-live="polite">
+  <div class="inner"><span class="vi" id="capVi"></span><span class="en" id="capEn"></span></div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
