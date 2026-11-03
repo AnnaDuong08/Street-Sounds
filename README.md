@@ -1,4 +1,4 @@
-# Tiếng Rao – CSCU9X5 prototype
+# Tiếng Rao 
 
 An interactive sound-map of Vietnam's street-vendor calls.
 
