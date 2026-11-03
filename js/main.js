@@ -249,6 +249,14 @@ function lantern(x, y){
   return `<circle cx="${x}" cy="${y}" r="16" fill="#f5a043" opacity=".18"/><circle cx="${x}" cy="${y}" r="6" fill="#f5a043"/>`;
 }
 function art(v){
+  return `<img class="vendor-img" src="images/vendors/${v.id}.png" data-id="${v.id}" alt="Illustration of the ${v.dish} seller">`;
+}
+// Falls back to the drawn illustration if a vendor image fails to load.
+document.addEventListener("error", e => {
+  const img = e.target;
+  if (img.classList && img.classList.contains("vendor-img")) img.outerHTML = drawnArt(vendorById[img.dataset.id]);
+}, true);
+function drawnArt(v){
   const c = v.color;
   let g = "";
   if (v.vehicle === "bike"){
@@ -436,12 +444,12 @@ mix.forEach(t => t.uid = ++mixUid);
 const mixRun = {on:false, nodes:{}};
 
 function tokenInfo(type){
-  const v = vendorById[type]; if (v) return {label:v.dish, color:v.color};
-  const a = ambientById[type]; return {label:a.label, color:a.color};
+  const v = vendorById[type]; if (v) return {label:v.dish, color:v.color, icon:`images/vendors/${v.id}.png`};
+  const a = ambientById[type]; return {label:a.label, color:a.color, icon:`images/ambient/${a.id}.png`};
 }
 function renderPalette(){
-  document.getElementById("paletteVendors").innerHTML = VENDORS.map(v => `<button class="btn btn-ghost" type="button" data-add="${v.id}"><span class="sw" style="background:${v.color}"></span>${v.dish}</button>`).join("");
-  document.getElementById("paletteAmbient").innerHTML = AMBIENT.map(a => `<button class="btn btn-ghost" type="button" data-add="${a.id}"><span class="sw" style="background:${a.color}"></span>${a.label}</button>`).join("");
+  document.getElementById("paletteVendors").innerHTML = VENDORS.map(v => `<button class="btn btn-ghost" type="button" data-add="${v.id}"><img class="sw" src="${tokenInfo(v.id).icon}" alt="">${v.dish}</button>`).join("");
+  document.getElementById("paletteAmbient").innerHTML = AMBIENT.map(a => `<button class="btn btn-ghost" type="button" data-add="${a.id}"><img class="sw" src="${tokenInfo(a.id).icon}" alt="">${a.label}</button>`).join("");
 }
 function renderBoard(){
   board.querySelectorAll(".token").forEach(n => n.remove());
@@ -453,7 +461,7 @@ function renderBoard(){
     el.style.left = t.x + "%"; el.style.top = t.y + "%"; el.style.setProperty("--tc", info.color);
     el.setAttribute("role", "button");
     el.setAttribute("aria-label", `${info.label}. Arrow keys move it, Delete removes it.`);
-    el.innerHTML = `<span class="dot"></span><span>${info.label}</span><button class="x" type="button" aria-label="Remove ${info.label}" tabindex="-1">×</button>`;
+    el.innerHTML = `<img class="dot" src="${info.icon}" alt=""><span>${info.label}</span><button class="x" type="button" aria-label="Remove ${info.label}" tabindex="-1">×</button>`;
     board.appendChild(el);
   });
   document.getElementById("mixCount").textContent = `${mix.length} of ${MAX_TOKENS} sounds on your street.`;
