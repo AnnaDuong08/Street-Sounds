@@ -91,7 +91,7 @@ const {openTalk, talkIsOpen, talkKey} = (() => {
     const s = conv.s, v = vendorById[conv.id];
     choices([
       {icon:"learn", label:`Tell me about ${v.dish}.`, done:conv.asked.has("learn"), go:() => { conv.asked.add("learn"); say(s.learn, menu); }},
-      {icon:"shop", label:"What are you selling?", go:() => say([s.shop.intro], shop)},
+      {icon:"shop", label:"What are you selling?", go:() => isSoldOut(conv.id) ? say([s.shop.empty], menu) : say([s.shop.intro], shop)},
       ...s.chats.map((c, i) => ({icon:"chat", label:c.ask, done:conv.asked.has(i), go:() => { conv.asked.add(i); say(c.reply, menu); }})),
       {icon:"leave", label:"I should get going.", go:farewell}
     ]);
@@ -100,7 +100,8 @@ const {openTalk, talkIsOpen, talkKey} = (() => {
   function shop(){
     tk.next.hidden = true;
     openShop(conv.id, boughtAny => {
-      if (boughtAny){ conv.bought = true; say(conv.s.shop.thanks, menu); } else menu();
+      // Buying their last item means they get to go home early
+      if (boughtAny){ conv.bought = true; say(isSoldOut(conv.id) ? conv.s.shop.soldOut : conv.s.shop.thanks, menu); } else menu();
     });
   }
   function farewell(){
@@ -118,7 +119,7 @@ const {openTalk, talkIsOpen, talkKey} = (() => {
     tk.role.textContent = s.role;
     tk.bye.hidden = false;
     tk.box.hidden = false;
-    say(s.greet, menu);
+    say(isSoldOut(id) ? s.shop.greetEmpty : s.greet, menu);
     return true;
   }
   function closeTalk(){

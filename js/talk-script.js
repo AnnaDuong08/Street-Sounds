@@ -7,6 +7,9 @@
    learn  – "Tell me about …"
    shop   – intro line, things to buy, and what they say after you buy. Each item has a price in đồng,
             how many they have each night (stock), a description (desc) and a short note shown in the buy panel
+            soldOut    – said when you buy their very last item of the night
+            greetEmpty – their greeting if you come back after they've sold out
+            empty      – their answer to "What are you selling?" once everything's gone
    chats  – the player's line (ask) and the vendor's reply
    bye    – happy: you bought something · sad: you left while they were talking · calm: any other goodbye
    The calls themselves stay in Vietnamese in quotes, with the meaning given in English, because they are the sound of the street. */
@@ -36,7 +39,16 @@ const TALK = {
          stock:5, desc:"Soft pork meatballs in a sweet tomato sauce, spooned into a roll so the bread soaks it all up.",
          note:"Messy. Eat it leaning forward."}
       ],
-      thanks:["[happy] Here you go, still warm. Careful, the crust crackles!"]
+      thanks:["[happy] Here you go, still warm. Careful, the crust crackles!"],
+      soldOut:[
+        "[happy] Wait… that was my last roll! You bought me out, {you}!",
+        "[happy] I can ride home early tonight. My grandson won't believe I'm back before ten!"
+      ],
+      greetEmpty:[
+        "[happy] {you}! My basket is empty, thanks to you.",
+        "I'm just resting my legs before the ride home."
+      ],
+      empty:"[happy] Not a single crumb left! Come back tomorrow evening."
     },
     chats:[
       {ask:"How long have you sold bánh mì?", reply:[
@@ -81,7 +93,16 @@ const TALK = {
          stock:5, desc:"Eggs stir-fried in a sticky sweet-and-sour tamarind sauce with garlic and peanuts.",
          note:"A favourite with students after evening class."}
       ],
-      thanks:["[happy] Eat it while it's hot! Sip the broth first, okay?"]
+      thanks:["[happy] Eat it while it's hot! Sip the broth first, okay?"],
+      soldOut:[
+        "[happy] Oh my! That was the very last egg!",
+        "[happy] Forty years, and I've never sold out this early. I can go home and watch my drama with my feet up!"
+      ],
+      greetEmpty:[
+        "[happy] Ah, it's you, {you}! The baskets are empty and so light.",
+        "Grandma Sáu is having a little rest before she walks home."
+      ],
+      empty:"[happy] All gone, {you}! Tomorrow I'll boil extra, just for you."
     },
     chats:[
       {ask:"Isn't that pole heavy?", reply:[
@@ -125,7 +146,16 @@ const TALK = {
          stock:6, desc:"Jackfruit, longan, lychee and jelly in sweetened coconut milk, with plenty of ice.",
          note:"Despite the name, it became popular in Saigon."}
       ],
-      thanks:["[happy] Extra ice for you. Stir it all the way to the bottom!"]
+      thanks:["[happy] Extra ice for you. Stir it all the way to the bottom!"],
+      soldOut:[
+        "[happy] That's the last glass! The cart is completely empty!",
+        "[happy] I can close early and catch the late show at the cinema for once. Thank you, {you}!"
+      ],
+      greetEmpty:[
+        "[happy] Hey {you}! Look, the glass is empty. You did that!",
+        "I'm just washing up before I go."
+      ],
+      empty:"[happy] Nothing left but ice! Come back tomorrow, I'm making sweet corn chè."
     },
     chats:[
       {ask:"Why is your call a question?", reply:[
@@ -171,7 +201,16 @@ const TALK = {
          stock:5, desc:"The full bowl: extra pork, liver, quail eggs and a few prawns on top of the noodles.",
          note:"For when you've had a very long day."}
       ],
-      thanks:["[happy] Coming right up! Tock-tock, one bowl!"]
+      thanks:["[happy] Coming right up! Tock-tock, one bowl!"],
+      soldOut:[
+        "[happy] No way… the pot's empty! That was the last bowl!",
+        "[happy] The boss will let me go home early. I might get more than five hours of sleep tonight. Thanks, {you}!"
+      ],
+      greetEmpty:[
+        "[happy] Tock-tock… just kidding, no more noodles tonight!",
+        "I'm stacking the bowls before we push the cart home."
+      ],
+      empty:"[happy] The broth's all gone, {you}. Listen for the knock tomorrow!"
     },
     chats:[
       {ask:"Can I try the clappers?", reply:[
@@ -217,7 +256,16 @@ const TALK = {
          stock:5, desc:"A dumpling served with a slice of Vietnamese pork roll and a little chilli sauce.",
          note:"A proper winter supper."}
       ],
-      thanks:["[happy] Unwrap it slowly, the steam is very hot. Enjoy!"]
+      thanks:["[happy] Unwrap it slowly, the steam is very hot. Enjoy!"],
+      soldOut:[
+        "[happy] Oh! That was the last one in the basket!",
+        "[happy] I can go home early and warm my hands by the stove. My daughter won't believe it. Thank you, {you}!"
+      ],
+      greetEmpty:[
+        "[happy] Hello again, {you}. The basket is empty, but it's still warm.",
+        "I'm folding up my stool and heading home soon."
+      ],
+      empty:"[happy] All sold, {you}! I'll fold extra leaves tomorrow."
     },
     chats:[
       {ask:"Why only in winter?", reply:[
@@ -261,7 +309,16 @@ const TALK = {
          stock:8, desc:"A bun filled with sweet, sticky barbecue pork.",
          note:"Uncle Hùng's own favourite."}
       ],
-      thanks:["[happy] Straight from the steamer. Mind your fingers!"]
+      thanks:["[happy] Straight from the steamer. Mind your fingers!"],
+      soldOut:[
+        "[happy] Hah! The steamer's empty! That was my last bun!",
+        "[happy] I can switch off the loudspeaker and ride home early. The neighbours will finally get some quiet. Thank you, {you}!"
+      ],
+      greetEmpty:[
+        "[happy] There you are, {you}! No buns left, so the loudspeaker can rest.",
+        "I'm letting the steamer cool down before I go."
+      ],
+      empty:"[happy] Sold out, {you}! Listen for the recording tomorrow night."
     },
     chats:[
       {ask:"Why use a recording?", reply:[

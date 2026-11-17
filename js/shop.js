@@ -2,7 +2,7 @@
 /* The vendor's shop: a pop-up of item cards, and a buy panel to choose how many.
    Your wallet and each vendor's stock are saved on this device and reset at midnight.
    Item pictures load from images/shop/<item id>.png; until they exist a labelled placeholder shows. */
-const {openShop, shopIsOpen, shopKey, addMoney, walletBalance} = (() => {
+const {openShop, shopIsOpen, shopKey, addMoney, walletBalance, isSoldOut} = (() => {
   const SHOP_KEY = "tiengrao.shop";
   const START_WALLET = 200000;   // đồng you start each night with
   const $ = id => document.getElementById(id);
@@ -134,11 +134,13 @@ const {openShop, shopIsOpen, shopKey, addMoney, walletBalance} = (() => {
   // Earnings from delivery runs go into the same wallet.
   function addMoney(n){ const l = ledger(); l.wallet += n; store.set(SHOP_KEY, l); return l.wallet; }
   const walletBalance = () => ledger().wallet;
+  // True once every item a vendor sells is gone for the night
+  const isSoldOut = id => { const l = ledger(); return TALK[id].shop.items.every(it => left(l, it) <= 0); };
   // Escape steps back: buy panel → shop → conversation. Other keys work as normal on the focused button.
   function shopKey(e){
     if (e.key !== "Escape") return;
     e.preventDefault();
     el.buy.hidden ? closeShop() : closeBuy();
   }
-  return {openShop, shopIsOpen, shopKey, addMoney, walletBalance};
+  return {openShop, shopIsOpen, shopKey, addMoney, walletBalance, isSoldOut};
 })();
