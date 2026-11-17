@@ -173,8 +173,9 @@ footer{padding-block:40px 120px;color:var(--muted);font-size:.9rem}
 
 .sprite{position:absolute;transform:translate(-50%,-100%);border:0;background:none;padding:0;color:var(--paper);cursor:grab;touch-action:none;
   display:flex;flex-direction:column;align-items:center}
+/* Default sprite heights; vendors and the motorbike are tuned per sprite further down */
 .sprite img{display:block;height:170px;width:auto;pointer-events:none;filter:drop-shadow(0 6px 0 rgba(0,0,0,.35));transition:filter .3s}
-.sprite.is-ambient img{height:105px}
+.sprite.is-ambient img{height:113px}
 .sprite.dragging{cursor:grabbing;z-index:5000!important}
 .sprite.dragging img{filter:drop-shadow(0 16px 8px rgba(0,0,0,.5))}
 .sprite.near img,.sprite:focus-visible img{filter:drop-shadow(0 0 10px rgba(245,160,67,.75)) drop-shadow(0 6px 0 rgba(0,0,0,.35))}
@@ -327,7 +328,17 @@ kbd{background:var(--paper);color:#1b1206;font-family:var(--f-mono);font-weight:
 
 /* player artwork and riding */
 .player .pl-art,.player .pl-ride{display:none}
-.player.has-walk-art:not(.riding) .pl-art.walk{display:block;height:120px;width:auto}
+/* Each picture frames its person differently (Tâm stands beside a tall cart, Auntie Thu sits on a low stool),
+   so heights are set per sprite to make every face the same size as yours. Measured from the face in each picture. */
+.sprite[data-type=banhmi] img{height:190px}
+.sprite[data-type=hotvitlon] img{height:170px}
+.sprite[data-type=che] img{height:173px}
+.sprite[data-type=hutieugo] img{height:208px}
+.sprite[data-type=banhgio] img{height:135px}
+.sprite[data-type=banhbao] img{height:180px}
+.sprite[data-type=moto] img{height:140px}   /* same bike as the one you ride */
+.player.has-walk-art:not(.riding){width:auto}
+.player.has-walk-art:not(.riding) .pl-art.walk{display:block;height:165px;width:auto}   /* about as tall as the walking vendors */
 .player.has-walk-art:not(.riding) .pl-pixel{display:none}
 .player.riding{width:170px}
 .player.riding .pl-ride{display:block;position:relative}
@@ -335,7 +346,7 @@ kbd{background:var(--paper);color:#1b1206;font-family:var(--f-mono);font-weight:
 .player.riding .pl-pixel{position:absolute;left:50%;bottom:62px;transform:translateX(-50%);z-index:1}
 .player.riding .pl-pixel svg{width:64px;height:87px}
 .player.riding.has-ride-art .pl-pixel,.player.riding.has-ride-art .pl-stand{display:none}
-.player.riding.has-ride-art .pl-art.ride{display:block;height:150px;width:auto}
+.player.riding.has-ride-art .pl-art.ride{display:block;height:185px;width:auto}
 .player.left .pl-ride img,.player.left .pl-art.walk{transform:scaleX(-1)}
 .player.riding.walking .pl-ride{animation:rumble .12s linear infinite alternate}
 @keyframes rumble{to{translate:0 -2px}}
@@ -473,4 +484,83 @@ kbd{background:var(--paper);color:#1b1206;font-family:var(--f-mono);font-weight:
   .street-bar .btn{padding:.2rem .45rem;font-size:.78rem}
   .hud{width:180px;font-size:.8rem}
   .build{left:12px;right:12px;top:auto;width:auto;max-height:60dvh}
+}
+
+/* ================= Painted art set: frames, icons, controls =================
+   Frames are 9-slice images: corners stay crisp, edges repeat. The flower corner of each frame is a separate
+   picture (panel-deco, dialog-deco) layered on top, so it never stretches. */
+img.ico{width:1.3em;height:1.3em;object-fit:contain;vertical-align:-.3em;margin-right:.3em}
+.tr-nav .btn{display:inline-flex;align-items:center;gap:5px}
+.tr-nav .btn .ico{width:18px;height:18px;margin:0}
+
+.listener img{width:46px;height:auto;filter:drop-shadow(0 4px 4px rgba(0,0,0,.4))}
+
+/* street page: the painted street behind the intro card */
+.intro{background:linear-gradient(rgba(10,25,38,.35),rgba(10,25,38,.7)),url(../images/street/panorama.png) center 40%/cover}
+
+/* paper pop-ups: shop, My bag, delivery runs, intro card, build panel.
+   Inside them the colour tokens flip to ink-on-paper, so buttons, labels and cards follow automatically. */
+.skin-panel{--paper:#3a2313;--muted:#7a5c40;--line:rgba(58,35,19,.28);--night:#fff6e6;--night-2:#f6e3c2;--night-3:#f1dcb4;
+  position:relative;color:var(--paper);background:#fddaab;background-clip:padding-box;
+  border:32px solid transparent;border-image:url(../images/ui/panel-frame.png) 40 / 32px stretch;border-radius:0;
+  padding:58px 24px 20px;box-shadow:0 24px 60px rgba(0,0,0,.55);overflow:visible;max-height:none}
+.skin-panel::before{content:"";position:absolute;left:-40px;top:-49px;width:162px;height:120px;z-index:3;pointer-events:none;
+  background:url(../images/ui/panel-deco.png) 0 0/100% 100% no-repeat}
+.shop,.deliver{overflow:auto;place-items:start center;padding-top:60px}
+.shop-panel.skin-panel,.dv-panel.skin-panel{margin:auto 0}
+.build.skin-panel{overflow:auto;padding:24px 16px 16px}
+.build.skin-panel::before{display:none}
+.build .btn-close{filter:none}
+.intro-card.skin-panel{padding:70px 22px 22px}
+.dv-map,.buy-actions{--paper:#f1e7d0;--muted:#a9b7c1;--line:rgba(241,231,208,.14);--night-3:#1e4462}
+kbd{background:#f1e7d0}
+/* cream cards inside the paper pop-ups use a fixed colour, because --paper turns into ink there */
+.ware-price,.bag-qty,.buy-card,.dv-result-card{background:#f1e7d0}
+.ware{border-color:rgba(58,35,19,.2)}
+.wallet{align-items:center;background:#2a1a10;border-color:#2a1a10}
+.wallet span{color:#d9c39a}
+.wallet .ico{width:20px;height:20px;margin:0}
+.shop-bag{background:none;border-radius:0}
+.shop-bag img{width:44px;height:44px;object-fit:contain}
+.shop-x{border:0;background:none;width:42px;height:42px;padding:0;transition:transform .15s}
+.shop-x:hover{background:none;transform:scale(1.1)}
+.shop-x .ico{width:34px;height:34px;margin:0;vertical-align:middle}
+
+/* conversation box: torn paper with flowers */
+.talk-box.skin-dialog{border:24px solid transparent;border-image:url(../images/ui/dialog-frame.png) 30 / 24px stretch;border-radius:0;
+  background:#fde3c2;background-clip:padding-box;box-shadow:0 16px 34px rgba(0,0,0,.5);padding:34px 18px 46px 22px}
+.talk-box.skin-dialog::before{content:"";position:absolute;left:-34px;top:-51px;width:172px;height:88px;pointer-events:none;
+  background:url(../images/ui/dialog-deco.png) 0 0/100% 100% no-repeat}
+.talk-actions{left:14px;right:14px;bottom:8px}
+.talk-choice .ico{background:none;width:36px;height:36px}
+.talk-choice .ico img{width:32px;height:32px;object-fit:contain}
+.talk-next .ico{width:1em;height:1em;margin:0 0 0 2px;vertical-align:-.1em}
+
+/* caption strip with the megaphone and the little tree */
+.caption-bar{background:none;border:solid transparent;border-width:16px 80px 16px 56px;
+  border-image:url(../images/ui/caption-bar.png) 20 100 20 70 fill / 16px 80px 16px 56px round;padding-block:4px}
+
+body.in-talk .caption-bar{display:none}
+/* money box, delivery and HUD icons */
+.money-box{align-items:center}
+.money-box .ico{width:22px;height:22px;margin:0}
+.pin-tag .ico{width:14px;height:14px;margin:0;vertical-align:-3px}
+.dv-stars img{width:46px;height:46px;margin:0 3px}
+
+/* sliders (amount, speed) and the checkbox */
+.qty-range{-webkit-appearance:none;appearance:none;height:24px;background:none}
+.qty-range::-webkit-slider-runnable-track{height:14px;border:0;
+  background:url(../images/ui/slider-fill.png) 0 0/var(--fill,0%) 100% no-repeat,url(../images/ui/slider-track.png) 0 0/100% 100% no-repeat}
+.qty-range::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-5px;border:0;background:url(../images/ui/slider-thumb.png) center/contain no-repeat}
+.qty-range::-moz-range-track{height:14px;border:0;
+  background:url(../images/ui/slider-fill.png) 0 0/var(--fill,0%) 100% no-repeat,url(../images/ui/slider-track.png) 0 0/100% 100% no-repeat}
+.qty-range::-moz-range-thumb{width:24px;height:24px;border:0;background:url(../images/ui/slider-thumb.png) center/contain no-repeat}
+.tr-app .form-check-input[type=checkbox]{width:1.5em;height:1.5em;border:0;border-radius:0;
+  background:url(../images/ui/check-off.png) center/contain no-repeat!important}
+.tr-app .form-check-input[type=checkbox]:checked{background-image:url(../images/ui/check-on.png)!important}
+
+@media (max-width:640px){
+  .skin-panel{border-width:22px;border-image-width:22px;padding:66px 12px 14px}
+  .skin-panel::before{left:-30px;top:-40px}
+  .caption-bar{border-width:12px 40px 12px 40px;border-image-width:12px 40px 12px 40px}
 }

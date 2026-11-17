@@ -143,8 +143,8 @@ const {openDelivery, deliveryIsOpen, deliveryKey} = (() => {
         return `<button class="pin${n >= 0 ? " planned" : ""}${o.delivered ? " delivered" : ""}" type="button" data-i="${i}" style="left:${p.x}%;top:${p.y}%"
             aria-label="${o.who}: ${o.food}, pays ${money(o.pay)}${n >= 0 ? `, stop ${n + 1}` : ""}">
           <span class="pin-art"><img src="images/game/house.png" alt=""><span class="pin-ph">${i + 1}</span></span>
-          <img class="pin-food" src="images/vendors/${o.vid}.png" alt="">
-          <span class="pin-tag">${o.delivered ? "✓" : n >= 0 ? `Stop ${n + 1}` : money(o.pay)}</span>
+          <img class="pin-food" src="images/mini/${o.vid}.png" alt="">
+          <span class="pin-tag">${o.delivered ? '<img class="ico" src="images/icons/check.png" alt="Delivered">' : n >= 0 ? `Stop ${n + 1}` : money(o.pay)}</span>
         </button>`; }).join("");
     el.pins.querySelectorAll(".pin-art img").forEach(img => {
       img.addEventListener("load", () => img.parentNode.classList.add("has-art"));
@@ -152,7 +152,7 @@ const {openDelivery, deliveryIsOpen, deliveryKey} = (() => {
     // order list
     el.orders.innerHTML = st.orders.map((o, i) => { const n = stop(i);
       return `<li class="${o.delivered ? "delivered" : n >= 0 ? "planned" : ""}">
-        <img src="images/vendors/${o.vid}.png" alt=""><span><b>${o.who}</b><small>${o.food}</small></span>
+        <img src="images/mini/${o.vid}.png" alt=""><span><b>${o.who}</b><small>${o.food}</small></span>
         <em>${o.delivered ? "Delivered" : n >= 0 ? `Stop ${n + 1}` : money(o.pay)}</em></li>`; }).join("");
     // route chips
     el.route.innerHTML = ["Stall", ...st.route.map(i => i < 0 ? "Stall (reload)" : st.orders[i].who), ...(allPlanned() ? ["Stall"] : [])]
@@ -229,7 +229,7 @@ const {openDelivery, deliveryIsOpen, deliveryKey} = (() => {
     addMoney(earned);
     st.done = true;
     el.resTitle.textContent = stars === 3 ? "Perfect route!" : stars === 2 ? "Nice riding!" : "All delivered!";
-    el.stars.innerHTML = [1, 2, 3].map(n => `<span class="${n <= stars ? "on" : ""}">★</span>`).join("");
+    el.stars.innerHTML = [1, 2, 3].map(n => `<img src="images/icons/star-${n <= stars ? "on" : "off"}.png" alt="">`).join("");
     el.stars.setAttribute("aria-label", `${stars} out of 3 stars`);
     el.resBody.innerHTML = `
       <dt>Your route</dt><dd>${km(mine)}</dd>

@@ -133,6 +133,7 @@ function renderItems(){
     el.type = "button";
     el.className = "sprite " + (v ? "is-vendor" : "is-ambient");
     el.dataset.uid = t.uid;
+    el.dataset.type = t.type;   // each sprite gets its own height so the people come out the same size
     el.setAttribute("aria-label", v ? `${v.dish} seller. Open to learn more.` : `${info.label}. Open for options.`);
     const r = rangeOf(t.type);
     el.innerHTML = `<span class="range" style="width:${r * 2}px;height:${r * 2}px"></span>
@@ -218,7 +219,7 @@ function updateHearing(now){
     if (lv.gain > 0.02) heard.push({t, g:lv.gain});
     if (t !== ride.bike && lv.d < MEET_DIST && (!nearest || lv.d < nearest.d)) nearest = {t, d:lv.d};
   });
-  if (busy() || ride.on) nearest = null;   // while riding, E means get off
+  if (busy() || ride.on) nearest = null;   // get off the bike (Esc) before talking to anyone
   items.forEach(t => {
     const on = !!nearest && nearest.t === t;
     t.el.classList.toggle("near", on);
@@ -228,7 +229,7 @@ function updateHearing(now){
   meet.item = nearest ? nearest.t : null;
   heard.sort((a, b) => b.g - a.g);
   document.getElementById("hearList").innerHTML = heard.length
-    ? heard.slice(0, 5).map(h => `<li><img src="${tokenInfo(h.t.type).icon}" alt=""><span>${tokenInfo(h.t.type).label}</span><i style="--w:${Math.round(h.g * 100)}%"></i></li>`).join("")
+    ? heard.slice(0, 5).map(h => `<li><img src="${tokenInfo(h.t.type).mini}" alt=""><span>${tokenInfo(h.t.type).label}</span><i style="--w:${Math.round(h.g * 100)}%"></i></li>`).join("")
     : `<li class="quiet">Nothing nearby. Walk towards the lights.</li>`;
 }
 
@@ -289,13 +290,13 @@ window.addEventListener("keydown", e => {
   if (talkIsOpen()){ talkKey(e); return; }
   if (deliveryIsOpen()){ deliveryKey(e); return; }
   const k = e.key.toLowerCase();
-  if (k === "escape"){ if (popItem) closePop(); else if (!buildPanel.hidden) toggleBuild(false); return; }
+  if (k === "escape"){
+    if (popItem) closePop(); else if (!buildPanel.hidden) toggleBuild(false); else if (ride.on) getOff();
+    return;
+  }
   if (!entered || popItem) return;
   if (DIRS[k]){ e.preventDefault(); keys.add(k); }
-  if (k === "e"){
-    if (ride.on){ e.preventDefault(); getOff(); }
-    else if (meet.item){ e.preventDefault(); interact(meet.item); }
-  }
+  if (k === "e" && !ride.on && meet.item){ e.preventDefault(); interact(meet.item); }
   if (k === "f" && (ride.on || (meet.item && meet.item.type === "moto"))){ e.preventDefault(); startDeliveries(); }
   if (ride.on && (k === "q" || k === "r")){ e.preventDefault(); setKmh(ride.kmh + (k === "r" ? 5 : -5)); }
 });
@@ -505,8 +506,8 @@ function toggleBuild(on){
 }
 document.getElementById("btnBuild").addEventListener("click", () => toggleBuild(buildPanel.hidden));
 document.getElementById("buildClose").addEventListener("click", () => toggleBuild(false));
-document.getElementById("paletteVendors").innerHTML = VENDORS.map(v => `<button class="btn btn-ghost" type="button" data-add="${v.id}"><img class="sw" src="${tokenInfo(v.id).icon}" alt="">${v.dish}</button>`).join("");
-document.getElementById("paletteAmbient").innerHTML = AMBIENT.map(a => `<button class="btn btn-ghost" type="button" data-add="${a.id}"><img class="sw" src="${tokenInfo(a.id).icon}" alt="">${a.label}</button>`).join("");
+document.getElementById("paletteVendors").innerHTML = VENDORS.map(v => `<button class="btn btn-ghost" type="button" data-add="${v.id}"><img class="sw" src="${tokenInfo(v.id).mini}" alt="">${v.dish}</button>`).join("");
+document.getElementById("paletteAmbient").innerHTML = AMBIENT.map(a => `<button class="btn btn-ghost" type="button" data-add="${a.id}"><img class="sw" src="${tokenInfo(a.id).mini}" alt="">${a.label}</button>`).join("");
 buildPanel.addEventListener("click", e => { const b = e.target.closest("[data-add]"); if (b) addItem(b.dataset.add); });
 function msg(s){ document.getElementById("mixMsg").textContent = s; }
 document.getElementById("btnMixClear").addEventListener("click", () => { setItems([]); msg("Street cleared. Add some sounds from the list."); });

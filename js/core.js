@@ -295,8 +295,9 @@ const EXAMPLE_MIX = [
   {type:"bell", x:84, y:12}, {type:"crickets", x:44, y:14}
 ];
 function tokenInfo(type){
-  const v = vendorById[type]; if (v) return {label:v.dish, color:v.color, icon:`images/vendors/${v.id}.png`};
-  const a = ambientById[type]; return {label:a.label, color:a.color, icon:`images/ambient/${a.id}.png`};
+  // icon: the full street sprite · mini: the small picture for lists, palettes and badges
+  const v = vendorById[type]; if (v) return {label:v.dish, color:v.color, icon:`images/vendors/${v.id}.png`, mini:`images/mini/${v.id}.png`};
+  const a = ambientById[type]; return {label:a.label, color:a.color, icon:`images/ambient/${a.id}.png`, mini:`images/mini/${a.id}.png`};
 }
 function encodeMix(items){
   const json = JSON.stringify(items.map(t => [t.type, Math.round(t.x), Math.round(t.y)]));
@@ -380,12 +381,13 @@ document.getElementById("storyPlay").addEventListener("click", () => storyVendor
 document.getElementById("btnMute").addEventListener("click", e => {
   muted = !muted;
   if (master) master.gain.setTargetAtTime(muted ? 0 : 0.9, ctx.currentTime, 0.05);
-  e.currentTarget.textContent = muted ? "Unmute" : "Mute all";
+  e.currentTarget.querySelector("span").textContent = muted ? "Unmute" : "Mute all";
+  e.currentTarget.querySelector("img").src = `images/icons/${muted ? "sound-off" : "sound-on"}.png`;
   e.currentTarget.setAttribute("aria-pressed", String(muted));
 });
 document.getElementById("btnCaptions").addEventListener("click", e => {
   captionsOn = !captionsOn;
   if (!captionsOn) document.getElementById("captionBar").classList.remove("show");
-  e.currentTarget.textContent = captionsOn ? "Captions on" : "Captions off";
+  e.currentTarget.querySelector("span").textContent = captionsOn ? "Captions on" : "Captions off";
   e.currentTarget.setAttribute("aria-pressed", String(captionsOn));
 });

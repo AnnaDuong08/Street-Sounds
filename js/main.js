@@ -12,7 +12,7 @@ function renderStreet(){
       <p class="call">${v.call}</p>
       <p class="en">${v.en}</p>
       <div class="row-btns">
-        <button class="btn btn-sm btn-lamp" data-act="play" type="button">Play call</button>
+        <button class="btn btn-sm btn-lamp" data-act="play" type="button"><img class="ico" src="images/icons/play.png" alt=""> Play call</button>
         <button class="btn btn-sm btn-ghost" data-act="story" type="button">Story</button>
       </div>
     </article>`).join("");
@@ -133,8 +133,8 @@ let mixUid = 0;
 mix.forEach(t => { t.uid = ++mixUid; t.y = Math.max(minY(t.type), t.y); });
 const mixRun = {on:false, nodes:{}};
 function renderPalette(){
-  document.getElementById("paletteVendors").innerHTML = VENDORS.map(v => `<button class="btn btn-ghost" type="button" data-add="${v.id}"><img class="sw" src="${tokenInfo(v.id).icon}" alt="">${v.dish}</button>`).join("");
-  document.getElementById("paletteAmbient").innerHTML = AMBIENT.map(a => `<button class="btn btn-ghost" type="button" data-add="${a.id}"><img class="sw" src="${tokenInfo(a.id).icon}" alt="">${a.label}</button>`).join("");
+  document.getElementById("paletteVendors").innerHTML = VENDORS.map(v => `<button class="btn btn-ghost" type="button" data-add="${v.id}"><img class="sw" src="${tokenInfo(v.id).mini}" alt="">${v.dish}</button>`).join("");
+  document.getElementById("paletteAmbient").innerHTML = AMBIENT.map(a => `<button class="btn btn-ghost" type="button" data-add="${a.id}"><img class="sw" src="${tokenInfo(a.id).mini}" alt="">${a.label}</button>`).join("");
 }
 function renderBoard(){
   board.querySelectorAll(".token").forEach(n => n.remove());
@@ -146,7 +146,7 @@ function renderBoard(){
     el.style.left = t.x + "%"; el.style.top = t.y + "%"; el.style.setProperty("--tc", info.color);
     el.setAttribute("role", "button");
     el.setAttribute("aria-label", `${info.label}. Arrow keys move it, Delete removes it.`);
-    el.innerHTML = `<img class="dot" src="${info.icon}" alt=""><span>${info.label}</span><button class="x" type="button" aria-label="Remove ${info.label}" tabindex="-1">×</button>`;
+    el.innerHTML = `<img class="dot" src="${info.mini}" alt=""><span>${info.label}</span><button class="x" type="button" aria-label="Remove ${info.label}" tabindex="-1">×</button>`;
     board.appendChild(el);
   });
   document.getElementById("mixCount").textContent = `${mix.length} of ${MAX_TOKENS} sounds on your street.`;

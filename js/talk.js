@@ -4,13 +4,9 @@
    Buying happens in the shop pop-up (shop.js). */
 // Wrapped so its helper names (say, menu, shop…) don't clash with street.js; only three functions are shared.
 const {openTalk, talkIsOpen, talkKey} = (() => {
-  const ICONS = {
-    learn:'<path d="M4 5h5a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3v11a2 2 0 0 1 2-2h6z"/>',
-    shop:'<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',
-    chat:'<path d="M4 5h16v11H10l-5 4v-4H4z"/>',
-    leave:'<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>'
-  };
-  const icon = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`;
+  // reply icons from images/icons/
+  const ICONS = {learn:"learn", shop:"bag", chat:"chat", leave:"leave"};
+  const icon = k => `<img src="images/icons/${ICONS[k]}.png" alt="">`;
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const tk = {
@@ -56,7 +52,7 @@ const {openTalk, talkIsOpen, talkKey} = (() => {
         if (i >= text.length){ clearInterval(conv.typer); conv.typer = null; }
       }, 22);
     }
-    tk.next.textContent = conv.phase === "farewell" ? "Close" : "Next ▸";
+    tk.next.innerHTML = conv.phase === "farewell" ? "Close" : 'Next <img class="ico" src="images/icons/next.png" alt="">';
     tk.next.hidden = false; tk.choices.hidden = true;
     tk.next.focus({preventScroll:true});
   }
@@ -119,6 +115,7 @@ const {openTalk, talkIsOpen, talkKey} = (() => {
     tk.role.textContent = s.role;
     tk.bye.hidden = false;
     tk.box.hidden = false;
+    document.body.classList.add("in-talk");   // hides the caption strip so it can't cover the Next / Goodbye buttons
     say(isSoldOut(id) ? s.shop.greetEmpty : s.greet, menu);
     return true;
   }
@@ -126,6 +123,7 @@ const {openTalk, talkIsOpen, talkKey} = (() => {
     if (!conv.open) return;
     clearInterval(conv.typer); conv.typer = null;
     conv.open = false; tk.box.hidden = true;
+    document.body.classList.remove("in-talk");
     const cb = conv.onClose; conv.onClose = null;
     if (cb) cb();
   }
