@@ -8,9 +8,12 @@ needed for Bootstrap 5, GSAP and Google Fonts, which load from CDNs.
 
 ## Files
 - `index.html` – page structure (Bootstrap 5 navbar, offcanvas, accordion, forms, toast)
+- `street.html` – Your street: the full version of Mix your street, walked with WASD
 - `css/style.css` – custom styles and colour tokens
-- `js/main.js` – vendor data, Web Audio sound engine, night walk, Hear the change,
-  Mix your street, contribution form
+- `js/core.js` – shared by both pages: vendor data, Web Audio sound engine, captions, story panel
+- `js/main.js` – home page: night walk, Hear the change, Mix your street preview, contribution form
+- `js/street.js` – Your street: movement, distance-based hearing, vendor cards, build panel
+- `images/` – vendor and street-sound artwork
 
 ## Technologies
 HTML5, CSS3, Bootstrap 5.3.3, JavaScript, Web Audio API, HTML5 Canvas, localStorage, GSAP 3.12.5.

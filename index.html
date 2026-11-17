@@ -116,11 +116,13 @@
   <div class="container">
     <div class="section-head">
       <div>
+        <p class="label mb-2"><span class="preview-tag">Preview</span></p>
         <h2 class="display" id="mixTitle">Mix your street</h2>
-        <p class="lede mb-0">Build your own soundscape. Add vendors and street sounds, then drag them around. The closer a sound is to you, the louder and clearer it gets. There's no score and no timer.</p>
+        <p class="lede mb-0">Build your own soundscape. Add vendors and street sounds, then drag them around. The closer a sound is to you, the louder and clearer it gets. When you're ready, step onto your street and walk it yourself.</p>
       </div>
       <div class="d-flex flex-wrap gap-2">
-        <button class="btn btn-lamp" id="btnMixPlay" type="button" aria-pressed="false">Play my street</button>
+        <a class="btn btn-lamp" id="btnFullStreet" href="street.html">Step onto your street →</a>
+        <button class="btn btn-ghost" id="btnMixPlay" type="button" aria-pressed="false">Play preview</button>
         <button class="btn btn-ghost" id="btnMixClear" type="button">Clear</button>
       </div>
     </div>
@@ -273,6 +275,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="js/core.js"></script>
 <script src="js/main.js"></script>
 
 </body>
