@@ -16,6 +16,8 @@ needed for Bootstrap 5, GSAP and Google Fonts, which load from CDNs.
 - `js/talk-script.js` – what each vendor says: greeting, story, shop, chats, goodbyes
 - `js/talk.js` – the conversation box that plays those scripts
 - `js/shop.js` – the vendor shop pop-up: item cards, buy panel, wallet and nightly stock
+- `js/delivery.js` – Delivery runs: the route-planning game played from the motorbike
+- `ASSETS.md` – every image the site still needs, with file names and sizes
 - `images/` – vendor and street-sound artwork
 
 ## Technologies

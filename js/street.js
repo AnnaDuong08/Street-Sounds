@@ -5,7 +5,10 @@
 // Same 16:10 shape as the preview board, so a mix's x/y percentages land in the same place.
 const W = 2400, H = 1500;
 const MAX_ITEMS = 16;
-const SPEED = 340;                 // world px per second
+const SPEED = 340;                 // walking, world px per second
+// Riding: speed shown in km/h and kept gentle, so 40 km/h is under three times walking pace.
+const ride = {on:false, bike:null, kmh:20};
+const rideSpeed = () => 300 + ride.kmh * 15;
 const MEET_DIST = 210;             // how close you must be to press E
 // How far each sound carries, in world px. Past this you can't hear it at all.
 const RANGE = {banhbao:950, bell:1300, rain:1100, moto:800, crickets:600};
@@ -24,7 +27,7 @@ const keys = new Set();
 let target = null;          // tap-to-walk destination
 let entered = false;        // sound starts when the visitor steps in
 let popItem = null;
-const busy = () => !!popItem || talkIsOpen();   // a card or conversation is open, so the player stands still
+const busy = () => !!popItem || talkIsOpen() || deliveryIsOpen();   // a card, conversation or game is open, so the player stands still
 const meet = {item:null};   // the item the E key would open
 const nodes = {};           // uid -> {bus, sound}
 
@@ -110,7 +113,11 @@ function playerSvg(){
   const col = {h:"#a8743a", H:"#e8c98a", k:"#2a1a10", s:"#e0b48a", e:"#2a1a10", T:"#55b3a3", P:"#3b4a63"};
   let r = "";
   PLAYER_PX.forEach((row, y) => [...row].forEach((ch, x) => { if (col[ch]) r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${col[ch]}"/>`; }));
-  return `<svg viewBox="0 0 14 19" shape-rendering="crispEdges">${r}</svg><span class="you">You</span>`;
+  // Artwork from images/player/ replaces the drawn figure once it exists; riding uses the motorbike picture as a stand-in.
+  return `<img class="pl-art walk" src="images/player/walking.png" alt="">
+    <span class="pl-pixel"><svg viewBox="0 0 14 19" shape-rendering="crispEdges">${r}</svg></span>
+    <span class="pl-ride"><img class="pl-art ride" src="images/player/riding.png" alt=""><span class="pl-stand"><img src="images/ambient/moto.png" alt=""></span></span>
+    <span class="you">You</span>`;
 }
 
 /* ---------------- Items on the street ---------------- */
@@ -129,7 +136,10 @@ function renderItems(){
     const r = rangeOf(t.type);
     el.innerHTML = `<span class="range" style="width:${r * 2}px;height:${r * 2}px"></span>
       <span class="bubble"></span><img src="${info.icon}" alt="" draggable="false"><span class="tag">${info.label}</span>
-      <span class="meet" aria-hidden="true">Press <kbd>E</kbd> to ${v ? "talk" : "look"}</span>`;
+      ${t.type === "moto"
+        ? `<span class="meet meet-2" aria-hidden="true"><span><kbd>E</kbd> Ride the motorbike</span><span><kbd>F</kbd> Delivery runs</span></span>`
+        : `<span class="meet" aria-hidden="true">Press <kbd>E</kbd> to ${v ? "talk" : "look"}</span>`}`;
+    if (t === ride.bike) el.classList.add("ridden");
     world.appendChild(el);
     t.el = el;
     placeItem(t);
@@ -170,6 +180,7 @@ function removeItem(t){
   renderItems(); save();
 }
 function setItems(next){
+  if (ride.on) getOff();
   items.forEach(stopItem);
   items = next.map(t => ({...t, uid:++uid}));
   items.forEach(clampPct);
@@ -204,9 +215,9 @@ function updateHearing(now){
     t.el.classList.toggle("audible", lv.gain > 0.02);
     t.el.style.setProperty("--lv", lv.gain.toFixed(2));
     if (lv.gain > 0.02) heard.push({t, g:lv.gain});
-    if (lv.d < MEET_DIST && (!nearest || lv.d < nearest.d)) nearest = {t, d:lv.d};
+    if (t !== ride.bike && lv.d < MEET_DIST && (!nearest || lv.d < nearest.d)) nearest = {t, d:lv.d};
   });
-  if (busy()) nearest = null;
+  if (busy() || ride.on) nearest = null;   // while riding, E means get off
   items.forEach(t => {
     const on = !!nearest && nearest.t === t;
     t.el.classList.toggle("near", on);
@@ -253,9 +264,12 @@ function frame(now){
   const len = Math.hypot(dx, dy);
   player.moving = len > 0;
   if (len){
-    player.x = Math.max(40, Math.min(W - 40, player.x + dx / len * SPEED * dt));
-    player.y = Math.max(H * ROOF_LINE / 100, Math.min(H - 8, player.y + dy / len * SPEED * dt));
+    const v = ride.on ? rideSpeed() : SPEED;
+    player.x = Math.max(40, Math.min(W - 40, player.x + dx / len * v * dt));
+    player.y = Math.max(H * ROOF_LINE / 100, Math.min(H - 8, player.y + dy / len * v * dt));
     if (dx) player.facing = Math.sign(dx);
+    // The bike (and its engine sound) travels with you
+    if (ride.on){ ride.bike.x = player.x / W * 100; ride.bike.y = player.y / H * 100; placeItem(ride.bike); }
   }
   playerEl.style.left = player.x + "px"; playerEl.style.top = player.y + "px";
   playerEl.style.zIndex = Math.round(player.y) + 1;
@@ -265,16 +279,23 @@ function frame(now){
   updateHearing(now);
 }
 
-const typing = () => { const a = document.activeElement; return a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA"); };
+// Only text boxes swallow keys; sliders and radio buttons shouldn't stop you walking.
+const typing = () => { const a = document.activeElement; return a && (a.tagName === "TEXTAREA" || (a.tagName === "INPUT" && !["range", "radio", "checkbox", "button"].includes(a.type))); };
 const storyOpen = () => document.getElementById("storyPanel").classList.contains("show");
 window.addEventListener("keydown", e => {
   if (typing() || storyOpen()) return;
   if (talkIsOpen()){ talkKey(e); return; }
+  if (deliveryIsOpen()){ deliveryKey(e); return; }
   const k = e.key.toLowerCase();
   if (k === "escape"){ if (popItem) closePop(); else if (!buildPanel.hidden) toggleBuild(false); return; }
   if (!entered || popItem) return;
   if (DIRS[k]){ e.preventDefault(); keys.add(k); }
-  if (k === "e" && meet.item){ e.preventDefault(); interact(meet.item); }
+  if (k === "e"){
+    if (ride.on){ e.preventDefault(); getOff(); }
+    else if (meet.item){ e.preventDefault(); interact(meet.item); }
+  }
+  if (k === "f" && (ride.on || (meet.item && meet.item.type === "moto"))){ e.preventDefault(); startDeliveries(); }
+  if (ride.on && (k === "q" || k === "r")){ e.preventDefault(); setKmh(ride.kmh + (k === "r" ? 5 : -5)); }
 });
 window.addEventListener("keyup", e => keys.delete(e.key.toLowerCase()));
 window.addEventListener("blur", () => keys.clear());
@@ -311,12 +332,16 @@ world.addEventListener("click", e => {
   const el = e.target.closest(".sprite"); if (!el) return;
   if (suppressClick){ suppressClick = false; return; }
   const t = items.find(i => i.uid === +el.dataset.uid);
-  if (t && entered && !talkIsOpen()) buildPanel.hidden ? interact(t) : openPop(t);
+  if (t && entered && !talkIsOpen() && t !== ride.bike) buildPanel.hidden && vendorById[t.type] ? interact(t) : openPop(t);
 });
 
 /* ---------------- Talking to vendors (dialogue in talk.js) ---------------- */
-// Vendors open a conversation; street sounds open the small card.
-function interact(t){ vendorById[t.type] && TALK[t.type] ? talkTo(t) : openPop(t); }
+// E near something: vendors talk, the motorbike gets ridden, other street sounds open the small card.
+function interact(t){
+  if (vendorById[t.type] && TALK[t.type]) talkTo(t);
+  else if (t.type === "moto") getOn(t);
+  else openPop(t);
+}
 function talkTo(t){
   keys.clear(); target = null;
   stopItem(t);   // they stop calling out while they talk to you
@@ -339,6 +364,9 @@ function openPop(t){
   document.getElementById("popCall").textContent = v ? v.call : "";
   document.getElementById("popEn").textContent = v ? v.en : "Part of the background of the street.";
   document.getElementById("popMore").hidden = !v;
+  const bike = t.type === "moto" && !ride.on;
+  document.getElementById("popRide").hidden = document.getElementById("popDeliver").hidden = !bike;
+  if (bike) document.getElementById("popEn").textContent = "Hop on and ride around the street, or take food orders around the neighbourhood to earn money for the shops.";
   pop.hidden = false;
   const vr = viewport.getBoundingClientRect(), sr = t.el.querySelector("img").getBoundingClientRect();
   const pw = pop.offsetWidth, ph = pop.offsetHeight;
@@ -348,7 +376,7 @@ function openPop(t){
   pop.style.left = Math.max(8, Math.min(vr.width - pw - 8, left)) + "px";
   pop.style.top = Math.max(8, Math.min(vr.height - ph - 8, top)) + "px";
   lastHear = 0;
-  (v ? document.getElementById("popMore") : document.getElementById("popBack")).focus();
+  (v ? document.getElementById("popMore") : bike ? document.getElementById("popRide") : document.getElementById("popBack")).focus();
 }
 function closePop(){
   if (!popItem) return;
@@ -359,12 +387,55 @@ document.getElementById("popBack").addEventListener("click", closePop);
 document.getElementById("popMore").addEventListener("click", () => {
   const t = popItem; closePop(); talkTo(t);
 });
+document.getElementById("popRide").addEventListener("click", () => { const t = popItem; closePop(); getOn(t); });
+document.getElementById("popDeliver").addEventListener("click", () => { closePop(); startDeliveries(); });
 document.getElementById("popRemove").addEventListener("click", () => {
   const t = popItem; const label = tokenInfo(t.type).label;
   popItem = null; pop.hidden = true; removeItem(t); msg(`Removed ${label}.`);
 });
 // Sprites are buttons; keep focus out of them after the story closes so E and the arrow keys walk again.
 document.getElementById("storyPanel").addEventListener("hidden.bs.offcanvas", () => document.activeElement.blur());
+
+/* ---------------- Riding the motorbike ---------------- */
+const rideHud = document.getElementById("rideHud");
+function getOn(t){
+  ride.on = true; ride.bike = t;
+  const p = toWorld(t); player.x = p.x; player.y = p.y;
+  t.el.classList.add("ridden");
+  playerEl.classList.add("riding");
+  rideHud.hidden = false;
+  keys.clear(); target = null; lastHear = 0;
+  document.activeElement.blur();
+}
+function getOff(){
+  if (!ride.on) return;
+  const t = ride.bike;
+  ride.on = false; ride.bike = null;
+  t.x = player.x / W * 100; t.y = player.y / H * 100; clampPct(t); placeItem(t);
+  t.el.classList.remove("ridden");
+  // step off to the side the bike isn't facing
+  player.x = Math.max(40, Math.min(W - 40, player.x - player.facing * 110));
+  playerEl.classList.remove("riding");
+  rideHud.hidden = true;
+  save(); lastHear = 0;
+}
+function setKmh(v){
+  ride.kmh = Math.max(10, Math.min(40, Math.round(v / 5) * 5));
+  document.getElementById("rideKmh").textContent = ride.kmh;
+  const r = document.getElementById("rideRange"); r.value = ride.kmh;
+  r.style.setProperty("--fill", `${(ride.kmh - 10) / 30 * 100}%`);
+}
+document.getElementById("rideRange").addEventListener("input", e => setKmh(+e.target.value));
+document.getElementById("rideRange").addEventListener("change", e => e.target.blur());
+document.getElementById("rideSlower").addEventListener("click", e => { setKmh(ride.kmh - 5); e.currentTarget.blur(); });
+document.getElementById("rideFaster").addEventListener("click", e => { setKmh(ride.kmh + 5); e.currentTarget.blur(); });
+document.getElementById("rideOff").addEventListener("click", e => { getOff(); e.currentTarget.blur(); });
+
+/* Delivery runs (game in delivery.js); earnings go to the shop wallet */
+function startDeliveries(){
+  keys.clear(); target = null;
+  openDelivery(() => { lastHear = 0; document.activeElement.blur(); });
+}
 
 /* ---------------- Build panel ---------------- */
 const buildPanel = document.getElementById("buildPanel");
@@ -416,6 +487,9 @@ document.getElementById("btnEnter").addEventListener("click", () => {
   save();
 })();
 playerEl.innerHTML = playerSvg();
+playerEl.querySelector(".pl-art.walk").addEventListener("load", () => playerEl.classList.add("has-walk-art"));
+playerEl.querySelector(".pl-art.ride").addEventListener("load", () => playerEl.classList.add("has-ride-art"));
+setKmh(ride.kmh);
 drawGround(); renderItems(); layout();
 window.addEventListener("resize", layout);
 requestAnimationFrame(frame);

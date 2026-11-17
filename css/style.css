@@ -325,6 +325,101 @@ kbd{background:var(--paper);color:#1b1206;font-family:var(--f-mono);font-weight:
 .buy-actions{display:flex;justify-content:center;gap:14px;background:#0a1926;border-radius:0 0 10px 10px;padding:14px}
 .buy-actions .btn{min-width:150px}
 
+/* player artwork and riding */
+.player .pl-art,.player .pl-ride{display:none}
+.player.has-walk-art:not(.riding) .pl-art.walk{display:block;height:120px;width:auto}
+.player.has-walk-art:not(.riding) .pl-pixel{display:none}
+.player.riding{width:170px}
+.player.riding .pl-ride{display:block;position:relative}
+.player.riding .pl-stand img{display:block;width:170px;height:auto;filter:drop-shadow(0 6px 0 rgba(0,0,0,.35))}
+.player.riding .pl-pixel{position:absolute;left:50%;bottom:62px;transform:translateX(-50%);z-index:1}
+.player.riding .pl-pixel svg{width:64px;height:87px}
+.player.riding.has-ride-art .pl-pixel,.player.riding.has-ride-art .pl-stand{display:none}
+.player.riding.has-ride-art .pl-art.ride{display:block;height:150px;width:auto}
+.player.left .pl-ride img,.player.left .pl-art.walk{transform:scaleX(-1)}
+.player.riding.walking .pl-ride{animation:rumble .12s linear infinite alternate}
+@keyframes rumble{to{translate:0 -2px}}
+.sprite.ridden{visibility:hidden;pointer-events:none}
+.sprite .meet-2{flex-direction:column;align-items:flex-start;gap:4px;border-radius:12px;padding:8px 14px}
+.ride-hud{position:absolute;left:12px;bottom:84px;z-index:20;width:230px;background:rgba(14,34,51,.92);border:1px solid var(--sodium);border-radius:8px;padding:10px 12px}
+.ride-hud[hidden]{display:none}
+.speedo{font-size:.9rem;color:var(--muted)}
+.speedo b{font-family:var(--f-mono);font-size:2rem;color:var(--sodium);line-height:1}
+.speed-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ride-hud .step{background:var(--night-3);color:var(--paper);border-color:var(--line)}
+.ride-keys{font-size:.78rem;color:var(--muted)}
+.ride-keys kbd{font-size:.7rem}
+
+/* delivery runs: a route-planning game on a neighbourhood map */
+.deliver{position:absolute;inset:0;z-index:45;display:grid;place-items:center;padding:16px;background:rgba(6,16,26,.62);backdrop-filter:blur(4px)}
+.deliver[hidden]{display:none}
+.dv-panel{position:relative;width:min(1120px,100%);max-height:100%;overflow:auto;background:linear-gradient(160deg,var(--night-2),#0c1d2c 70%);
+  border:1px solid var(--line);border-top:3px solid var(--sodium);border-radius:10px;padding:18px 22px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.dv-levels{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.dv-levels .btn[aria-pressed=true]{background:var(--sodium);color:#1b1206;border-color:var(--sodium)}
+.dv-body{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+.dv-map{position:relative;aspect-ratio:8/5;border-radius:8px;overflow:hidden;background:#0a1926;border:1px solid var(--line)}
+.dv-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.dv-map svg{position:absolute;inset:0;width:100%;height:100%}
+.dv-street{stroke:#2a3036;stroke-width:16;stroke-linecap:round}
+.dv-block{opacity:.9}
+.dv-mine{fill:none;stroke:var(--sodium);stroke-width:7;stroke-linejoin:round;stroke-linecap:round}
+.dv-best{fill:none;stroke:var(--tile);stroke-width:5;stroke-dasharray:4 12;stroke-linecap:round;stroke-linejoin:round}
+.dv-legend{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:.82rem;color:var(--muted)}
+.dv-legend span{display:inline-block;width:26px;height:0;border-top:4px solid var(--sodium)}
+.dv-legend .best{border-top:4px dashed var(--tile);margin-left:10px}
+.pin{position:absolute;transform:translate(-50%,-50%);border:0;background:none;padding:0;color:var(--paper);display:flex;flex-direction:column;align-items:center}
+.pin-art{position:relative;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--night-3);border:2px dashed rgba(241,231,208,.5);overflow:hidden}
+.pin-art img{display:none;width:100%;height:100%;object-fit:contain}
+.pin-art.has-art{border:0;background:none;border-radius:0}
+.pin-art.has-art img{display:block}
+.pin-art.has-art .pin-ph{display:none}
+.pin-ph{font-weight:700;font-size:1rem}
+.pin.depot .pin-art{width:58px;height:58px;border-color:var(--sodium);background:#3a2a14}
+.pin.depot .pin-ph{font-size:.8rem;color:var(--sodium)}
+.pin-food{position:absolute;right:-10px;top:-8px;width:26px;height:26px;object-fit:contain;background:var(--paper);border-radius:50%;padding:2px}
+.pin-tag{margin-top:2px;font-family:var(--f-mono);font-size:.68rem;font-weight:600;background:rgba(10,25,38,.92);border:1px solid var(--line);border-radius:4px;padding:0 5px;white-space:nowrap}
+.pin:hover .pin-art,.pin:focus-visible .pin-art{border-color:var(--sodium);border-style:solid;box-shadow:0 0 0 4px rgba(245,160,67,.3)}
+.pin:focus-visible{outline:none!important}
+.pin.planned .pin-tag{background:var(--sodium);color:#1b1206;border-color:var(--sodium)}
+.pin.delivered .pin-art{border-color:var(--tile);border-style:solid}
+.pin.delivered .pin-tag{background:var(--tile);color:#0e2233;border-color:var(--tile)}
+.dv-scooter{position:absolute;transform:translate(-50%,-70%);z-index:3;pointer-events:none}
+.dv-scooter img{width:58px;height:auto;display:block;filter:drop-shadow(0 4px 4px rgba(0,0,0,.5))}
+.dv-scooter.left img{transform:scaleX(-1)}
+.dv-side{display:grid;gap:10px;align-content:start}
+.dv-how{margin:0;font-size:.88rem;color:var(--muted)}
+.dv-load b{font-family:var(--f-mono);color:var(--sodium);font-size:1.1rem}
+.dv-orders{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.dv-orders li{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;background:rgba(0,0,0,.2);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+.dv-orders img{width:26px;height:26px;object-fit:contain}
+.dv-orders span{display:flex;flex-direction:column;line-height:1.25;font-size:.88rem}
+.dv-orders small{color:var(--muted)}
+.dv-orders em{font-style:normal;font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
+.dv-orders li.planned{border-color:rgba(245,160,67,.6)}
+.dv-orders li.planned em{color:var(--sodium)}
+.dv-orders li.delivered em{color:var(--tile)}
+.dv-route{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:.78rem}
+.dv-route .chip{background:var(--night-3);border-radius:999px;padding:1px 8px}
+.dv-route .chip.depot{background:#3a2a14;color:var(--sodium)}
+.dv-route .arrow{color:var(--muted)}
+.dv-stats{display:grid;grid-template-columns:1fr auto;gap:2px 12px;margin:0;font-size:.88rem}
+.dv-stats dt{font-weight:400;color:var(--muted)}
+.dv-stats dd{margin:0;font-family:var(--f-mono);text-align:right}
+.dv-stats dd:last-child{color:var(--sodium);font-weight:600}
+.dv-msg{font-size:.85rem;min-height:2.6em;color:var(--paper)}
+.dv-result{position:absolute;inset:0;z-index:4;display:grid;place-items:center;padding:16px;background:rgba(6,16,26,.75);backdrop-filter:blur(3px)}
+.dv-result[hidden]{display:none}
+.dv-result-card{width:min(400px,100%);background:var(--paper);color:#1b1206;border-radius:10px;padding:22px;text-align:center}
+.dv-result-card .btn-ghost{--bs-btn-color:#1b1206;--bs-btn-border-color:rgba(27,18,6,.3);--bs-btn-hover-bg:rgba(27,18,6,.08);--bs-btn-hover-color:#1b1206}
+.dv-result-card .btn-link{color:#6b4a30}
+.dv-stars{font-size:2.2rem;letter-spacing:.15em;color:rgba(27,18,6,.18)}
+.dv-stars .on{color:var(--sodium);text-shadow:0 2px 0 #b46a1f}
+.dv-res{display:grid;grid-template-columns:1fr auto;gap:4px 14px;text-align:left;margin:12px 0 16px}
+.dv-res dt{font-weight:400;color:#6b5a48}
+.dv-res dd{margin:0;font-family:var(--f-mono);text-align:right}
+.dv-res .total{border-top:1px solid rgba(27,18,6,.2);padding-top:6px;font-weight:700;color:#1b1206}
+
 @media (max-width:640px){
   .street-title{display:none}
   .talk{grid-template-columns:1fr;bottom:8px}
@@ -345,6 +440,12 @@ kbd{background:var(--paper);color:#1b1206;font-family:var(--f-mono);font-weight:
   .buy-left #buyArt{width:120px;height:120px}
   .item-img.big{width:92px;height:92px}
   .buy-actions .btn{min-width:0;flex:1}
+  .dv-panel{padding:14px}
+  .dv-body{grid-template-columns:1fr}
+  .pin-art{width:34px;height:34px}
+  .pin.depot .pin-art{width:42px;height:42px}
+  .pin-tag{display:none}
+  .ride-hud{bottom:auto;top:12px;left:auto;right:12px;width:200px}
   .street-bar{gap:6px}
   .street-bar .navbar-brand{font-size:.95rem;margin-right:0}
   .street-bar .btn{padding:.2rem .45rem;font-size:.78rem}
