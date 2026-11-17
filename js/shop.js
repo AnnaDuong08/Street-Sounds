@@ -2,9 +2,12 @@
 /* The vendor's shop: a pop-up of item cards, and a buy panel to choose how many.
    Your wallet and each vendor's stock are saved on this device and reset at midnight.
    Item pictures load from images/shop/<item id>.png; until they exist a labelled placeholder shows. */
-const {openShop, shopIsOpen, shopKey, addMoney, walletBalance, isSoldOut} = (() => {
+const {openShop, shopIsOpen, shopKey, addMoney, walletBalance, isSoldOut, bagContents} = (() => {
   const SHOP_KEY = "tiengrao.shop";
   const START_WALLET = 200000;   // đồng you start each night with
+  const BAG_KEY = "tiengrao.bag";   // everything you've ever bought: {itemId: count}; unlike stock, it never resets
+  // Tells the street page to refresh the money box and bag count
+  const changed = () => window.dispatchEvent(new CustomEvent("tiengrao:wallet"));
   const $ = id => document.getElementById(id);
   const money = n => n.toLocaleString("en-US") + " ₫";
 
@@ -116,6 +119,8 @@ const {openShop, shopIsOpen, shopKey, addMoney, walletBalance, isSoldOut} = (() 
     l.wallet -= q * it.price;
     l.sold[it.id] = (l.sold[it.id] || 0) + q;
     store.set(SHOP_KEY, l);
+    const bag = store.get(BAG_KEY, {}); bag[it.id] = (bag[it.id] || 0) + q; store.set(BAG_KEY, bag);
+    changed();
     state.boughtAny = true;
     el.buy.hidden = true;
     render();
@@ -132,15 +137,20 @@ const {openShop, shopIsOpen, shopKey, addMoney, walletBalance, isSoldOut} = (() 
 
   const shopIsOpen = () => state.open;
   // Earnings from delivery runs go into the same wallet.
-  function addMoney(n){ const l = ledger(); l.wallet += n; store.set(SHOP_KEY, l); return l.wallet; }
+  function addMoney(n){ const l = ledger(); l.wallet += n; store.set(SHOP_KEY, l); changed(); return l.wallet; }
   const walletBalance = () => ledger().wallet;
   // True once every item a vendor sells is gone for the night
   const isSoldOut = id => { const l = ledger(); return TALK[id].shop.items.every(it => left(l, it) <= 0); };
+  // What's in your bag, with the item and who sold it
+  function bagContents(){
+    const bag = store.get(BAG_KEY, {});
+    return Object.entries(TALK).flatMap(([vid, t]) => t.shop.items.filter(it => bag[it.id] > 0).map(it => ({it, vid, seller:t.name, count:bag[it.id]})));
+  }
   // Escape steps back: buy panel → shop → conversation. Other keys work as normal on the focused button.
   function shopKey(e){
     if (e.key !== "Escape") return;
     e.preventDefault();
     el.buy.hidden ? closeShop() : closeBuy();
   }
-  return {openShop, shopIsOpen, shopKey, addMoney, walletBalance, isSoldOut};
+  return {openShop, shopIsOpen, shopKey, addMoney, walletBalance, isSoldOut, bagContents};
 })();

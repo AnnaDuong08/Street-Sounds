@@ -27,7 +27,8 @@ const keys = new Set();
 let target = null;          // tap-to-walk destination
 let entered = false;        // sound starts when the visitor steps in
 let popItem = null;
-const busy = () => !!popItem || talkIsOpen() || deliveryIsOpen();   // a card, conversation or game is open, so the player stands still
+const busy = () => !!popItem || talkIsOpen() || deliveryIsOpen() || !bagBox.hidden;   // a card, conversation, game or your bag is open, so the player stands still
+const bagBox = document.getElementById("bag");
 const meet = {item:null};   // the item the E key would open
 const nodes = {};           // uid -> {bus, sound}
 
@@ -284,6 +285,7 @@ const typing = () => { const a = document.activeElement; return a && (a.tagName 
 const storyOpen = () => document.getElementById("storyPanel").classList.contains("show");
 window.addEventListener("keydown", e => {
   if (typing() || storyOpen()) return;
+  if (!bagBox.hidden){ if (e.key === "Escape"){ e.preventDefault(); closeBag(); } return; }
   if (talkIsOpen()){ talkKey(e); return; }
   if (deliveryIsOpen()){ deliveryKey(e); return; }
   const k = e.key.toLowerCase();
@@ -437,6 +439,62 @@ function startDeliveries(){
   openDelivery(() => { lastHear = 0; document.activeElement.blur(); });
 }
 
+/* ---------------- Money box and My bag ---------------- */
+const money = n => n.toLocaleString("en-US") + " ₫";
+let shownWallet = null, deltaTimer = null;
+// Keeps the wallet on the street and the bag count up to date; a small +/− floats up when money changes.
+function refreshWallet(){
+  const w = walletBalance();
+  document.getElementById("moneyAmt").textContent = money(w);
+  if (shownWallet !== null && w !== shownWallet){
+    const d = document.getElementById("moneyDelta"), diff = w - shownWallet;
+    d.textContent = (diff > 0 ? "+ " : "− ") + money(Math.abs(diff));
+    d.className = "money-delta show " + (diff > 0 ? "up" : "down");
+    clearTimeout(deltaTimer); deltaTimer = setTimeout(() => { d.className = "money-delta"; }, 1800);
+  }
+  shownWallet = w;
+  const n = bagContents().reduce((a, b) => a + b.count, 0);
+  document.getElementById("bagCount").textContent = n;
+  document.getElementById("btnBag").setAttribute("aria-label", `My bag, ${n} item${n === 1 ? "" : "s"}`);
+  if (!bagBox.hidden) renderBag();
+}
+window.addEventListener("tiengrao:wallet", refreshWallet);
+function renderBag(){
+  const list = bagContents();
+  document.getElementById("bagWallet").textContent = money(walletBalance());
+  document.getElementById("bagGrid").innerHTML = list.length ? list.map(b => `
+    <div class="ware bag-item" style="--vc:${vendorById[b.vid].color}">
+      <span class="bag-qty">× ${b.count}</span>
+      <span class="item-img"><img src="images/shop/${b.it.id}.png" alt=""><span class="ph">${b.it.id}.png</span></span>
+      <span class="ware-name">${b.it.name}</span>
+      <span class="ware-sub">From ${b.seller} · ${vendorById[b.vid].dish}</span>
+      <span class="ware-price">${money(b.it.price)} each</span>
+    </div>`).join("") : `<p class="bag-empty">Your bag is empty. Talk to a vendor and ask what they're selling, or earn money with delivery runs on the motorbike first.</p>`;
+  document.getElementById("bagGrid").querySelectorAll(".item-img img").forEach(img => {
+    img.addEventListener("error", () => img.parentNode.classList.add("missing"));
+    img.addEventListener("load", () => img.parentNode.classList.remove("missing"));
+  });
+  const count = list.reduce((a, b) => a + b.count, 0), spent = list.reduce((a, b) => a + b.count * b.it.price, 0);
+  document.getElementById("bagFoot").textContent = list.length ? `${count} item${count === 1 ? "" : "s"} · ${money(spent)} spent altogether` : "";
+}
+let bagReturn = null;
+function openBag(){
+  bagReturn = document.activeElement;
+  keys.clear(); target = null;
+  renderBag();
+  bagBox.hidden = false;
+  document.getElementById("bagClose").focus({preventScroll:true});
+}
+function closeBag(){
+  bagBox.hidden = true;
+  // back to whatever you were doing: a conversation or shop keeps its focus, otherwise the street gets the keys
+  if (bagReturn && bagReturn !== document.getElementById("btnBag") && document.body.contains(bagReturn)) bagReturn.focus({preventScroll:true});
+  else document.activeElement.blur();
+}
+document.getElementById("btnBag").addEventListener("click", () => bagBox.hidden ? openBag() : closeBag());
+document.getElementById("bagClose").addEventListener("click", closeBag);
+bagBox.addEventListener("click", e => { if (e.target === bagBox) closeBag(); });
+
 /* ---------------- Build panel ---------------- */
 const buildPanel = document.getElementById("buildPanel");
 function toggleBuild(on){
@@ -490,6 +548,7 @@ playerEl.innerHTML = playerSvg();
 playerEl.querySelector(".pl-art.walk").addEventListener("load", () => playerEl.classList.add("has-walk-art"));
 playerEl.querySelector(".pl-art.ride").addEventListener("load", () => playerEl.classList.add("has-ride-art"));
 setKmh(ride.kmh);
+refreshWallet();
 drawGround(); renderItems(); layout();
 window.addEventListener("resize", layout);
 requestAnimationFrame(frame);

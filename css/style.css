@@ -420,6 +420,25 @@ kbd{background:var(--paper);color:#1b1206;font-family:var(--f-mono);font-weight:
 .dv-res dd{margin:0;font-family:var(--f-mono);text-align:right}
 .dv-res .total{border-top:1px solid rgba(27,18,6,.2);padding-top:6px;font-weight:700;color:#1b1206}
 
+/* money box on the street, and My bag */
+.money-box{position:absolute;right:12px;top:12px;z-index:20;display:flex;align-items:baseline;gap:8px;background:rgba(14,34,51,.9);
+  border:1px solid var(--sodium);border-radius:999px;padding:6px 16px;pointer-events:none;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.money-box .label{font-size:.68rem}
+.money-box b{font-family:var(--f-mono);font-size:1.15rem;color:var(--sodium)}
+.money-delta{position:absolute;right:16px;top:100%;margin-top:4px;font-family:var(--f-mono);font-weight:600;font-size:.95rem;white-space:nowrap;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}
+.money-delta.show{opacity:1;transform:none;animation:floatUp 1.8s ease-out forwards}
+.money-delta.up{color:#7fd7a8}
+.money-delta.down{color:#ff9a86}
+@keyframes floatUp{0%{transform:translateY(8px)}20%{transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
+.bag-btn{display:inline-flex;align-items:center;gap:6px}
+.bag-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bag-count{min-width:20px;font-family:var(--f-mono);font-size:.72rem;font-weight:600;background:var(--sodium);color:#1b1206;border-radius:999px;padding:0 6px}
+.shop.bag{z-index:47}
+.bag-item{cursor:default}
+.bag-item:hover{transform:none;border-color:var(--line);box-shadow:none}
+.bag-qty{align-self:flex-end;margin:10px 10px 0 0;font-family:var(--f-mono);font-weight:700;font-size:1rem;background:var(--paper);color:#1b1206;border-radius:999px;padding:1px 10px}
+.bag-empty{grid-column:1/-1;margin:20px 0;text-align:center;color:var(--muted)}
+
 @media (max-width:640px){
   .street-title{display:none}
   .talk{grid-template-columns:1fr;bottom:8px}
@@ -445,7 +464,10 @@ kbd{background:var(--paper);color:#1b1206;font-family:var(--f-mono);font-weight:
   .pin-art{width:34px;height:34px}
   .pin.depot .pin-art{width:42px;height:42px}
   .pin-tag{display:none}
-  .ride-hud{bottom:auto;top:12px;left:auto;right:12px;width:200px}
+  .ride-hud{bottom:auto;top:62px;left:auto;right:12px;width:200px}
+  .bag-label{display:none}
+  .money-box{padding:4px 12px}
+  .money-box b{font-size:1rem}
   .street-bar{gap:6px}
   .street-bar .navbar-brand{font-size:.95rem;margin-right:0}
   .street-bar .btn{padding:.2rem .45rem;font-size:.78rem}
