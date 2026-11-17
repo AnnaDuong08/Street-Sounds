@@ -24,6 +24,7 @@ const keys = new Set();
 let target = null;          // tap-to-walk destination
 let entered = false;        // sound starts when the visitor steps in
 let popItem = null;
+const busy = () => !!popItem || talkIsOpen();   // a card or conversation is open, so the player stands still
 const meet = {item:null};   // the item the E key would open
 const nodes = {};           // uid -> {bus, sound}
 
@@ -114,7 +115,7 @@ function playerSvg(){
 
 /* ---------------- Items on the street ---------------- */
 const toWorld = t => ({x:t.x / 100 * W, y:t.y / 100 * H});
-function clampPct(t){ t.x = Math.max(3, Math.min(97, t.x)); t.y = Math.max(8, Math.min(98, t.y)); }
+function clampPct(t){ t.x = Math.max(3, Math.min(97, t.x)); t.y = Math.max(Math.max(8, minY(t.type)), Math.min(98, t.y)); }
 
 function renderItems(){
   world.querySelectorAll(".sprite").forEach(n => n.remove());
@@ -127,7 +128,8 @@ function renderItems(){
     el.setAttribute("aria-label", v ? `${v.dish} seller. Open to learn more.` : `${info.label}. Open for options.`);
     const r = rangeOf(t.type);
     el.innerHTML = `<span class="range" style="width:${r * 2}px;height:${r * 2}px"></span>
-      <span class="bubble"></span><img src="${info.icon}" alt="" draggable="false"><span class="tag">${info.label}</span>`;
+      <span class="bubble"></span><img src="${info.icon}" alt="" draggable="false"><span class="tag">${info.label}</span>
+      <span class="meet" aria-hidden="true">Press <kbd>E</kbd> to ${v ? "talk" : "look"}</span>`;
     world.appendChild(el);
     t.el = el;
     placeItem(t);
@@ -204,18 +206,18 @@ function updateHearing(now){
     if (lv.gain > 0.02) heard.push({t, g:lv.gain});
     if (lv.d < MEET_DIST && (!nearest || lv.d < nearest.d)) nearest = {t, d:lv.d};
   });
-  items.forEach(t => t.el.classList.toggle("near", !!nearest && nearest.t === t));
+  if (busy()) nearest = null;
+  items.forEach(t => {
+    const on = !!nearest && nearest.t === t;
+    t.el.classList.toggle("near", on);
+    // The E tag sits on the vendor's far side from you: you on the right, tag on the left, and the other way round.
+    if (on) t.el.classList.toggle("meet-left", player.x > toWorld(t).x);
+  });
+  meet.item = nearest ? nearest.t : null;
   heard.sort((a, b) => b.g - a.g);
   document.getElementById("hearList").innerHTML = heard.length
     ? heard.slice(0, 5).map(h => `<li><img src="${tokenInfo(h.t.type).icon}" alt=""><span>${tokenInfo(h.t.type).label}</span><i style="--w:${Math.round(h.g * 100)}%"></i></li>`).join("")
     : `<li class="quiet">Nothing nearby. Walk towards the lights.</li>`;
-  const pr = document.getElementById("prompt");
-  const next = nearest && !popItem ? nearest.t : null;
-  if (next !== meet.item){
-    meet.item = next;
-    pr.innerHTML = next ? `<kbd>E</kbd> ${vendorById[next.type] ? `Meet the ${vendorById[next.type].dish} seller` : `Look at the ${tokenInfo(next.type).label.toLowerCase()}`}` : "";
-    pr.classList.toggle("show", !!next);
-  }
 }
 
 /* ---------------- Camera and movement ---------------- */
@@ -237,9 +239,10 @@ function screenToWorld(cx, cy){
 const DIRS = {w:[0,-1], arrowup:[0,-1], s:[0,1], arrowdown:[0,1], a:[-1,0], arrowleft:[-1,0], d:[1,0], arrowright:[1,0]};
 let last = performance.now();
 function frame(now){
+  requestAnimationFrame(frame);   // scheduled first, so one bad frame can't freeze the street
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   let dx = 0, dy = 0;
-  if (entered && !popItem){
+  if (entered && !busy()){
     keys.forEach(k => { dx += DIRS[k][0]; dy += DIRS[k][1]; });
     if (dx || dy) target = null;
     else if (target){
@@ -251,7 +254,7 @@ function frame(now){
   player.moving = len > 0;
   if (len){
     player.x = Math.max(40, Math.min(W - 40, player.x + dx / len * SPEED * dt));
-    player.y = Math.max(H * 0.1, Math.min(H - 8, player.y + dy / len * SPEED * dt));
+    player.y = Math.max(H * ROOF_LINE / 100, Math.min(H - 8, player.y + dy / len * SPEED * dt));
     if (dx) player.facing = Math.sign(dx);
   }
   playerEl.style.left = player.x + "px"; playerEl.style.top = player.y + "px";
@@ -260,18 +263,18 @@ function frame(now){
   playerEl.classList.toggle("left", player.facing < 0);
   follow();
   updateHearing(now);
-  requestAnimationFrame(frame);
 }
 
 const typing = () => { const a = document.activeElement; return a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA"); };
 const storyOpen = () => document.getElementById("storyPanel").classList.contains("show");
 window.addEventListener("keydown", e => {
   if (typing() || storyOpen()) return;
+  if (talkIsOpen()){ talkKey(e); return; }
   const k = e.key.toLowerCase();
   if (k === "escape"){ if (popItem) closePop(); else if (!buildPanel.hidden) toggleBuild(false); return; }
   if (!entered || popItem) return;
   if (DIRS[k]){ e.preventDefault(); keys.add(k); }
-  if (k === "e" && meet.item){ e.preventDefault(); openPop(meet.item); }
+  if (k === "e" && meet.item){ e.preventDefault(); interact(meet.item); }
 });
 window.addEventListener("keyup", e => keys.delete(e.key.toLowerCase()));
 window.addEventListener("blur", () => keys.clear());
@@ -279,7 +282,7 @@ window.addEventListener("blur", () => keys.clear());
 /* ---------------- Pointer: drag items, tap the ground to walk ---------------- */
 let drag = null, suppressClick = false;
 world.addEventListener("pointerdown", e => {
-  if (!entered) return;
+  if (!entered || talkIsOpen()) return;
   const el = e.target.closest(".sprite");
   if (!el){
     if (popItem){ closePop(); return; }
@@ -308,17 +311,32 @@ world.addEventListener("click", e => {
   const el = e.target.closest(".sprite"); if (!el) return;
   if (suppressClick){ suppressClick = false; return; }
   const t = items.find(i => i.uid === +el.dataset.uid);
-  if (t && entered) openPop(t);
+  if (t && entered && !talkIsOpen()) buildPanel.hidden ? interact(t) : openPop(t);
 });
 
-/* ---------------- Vendor card: learn more or go back to the street ---------------- */
+/* ---------------- Talking to vendors (dialogue in talk.js) ---------------- */
+// Vendors open a conversation; street sounds open the small card.
+function interact(t){ vendorById[t.type] && TALK[t.type] ? talkTo(t) : openPop(t); }
+function talkTo(t){
+  keys.clear(); target = null;
+  stopItem(t);   // they stop calling out while they talk to you
+  t.el.classList.add("talking");
+  lastHear = 0;
+  openTalk(t.type, () => {
+    t.el.classList.remove("talking");
+    startItem(t); lastHear = 0;
+    document.activeElement.blur();
+  });
+}
+
+/* ---------------- Small card: talk, remove, or go back to the street ---------------- */
 function openPop(t){
   popItem = t; keys.clear(); target = null;
   const v = vendorById[t.type], a = ambientById[t.type], info = tokenInfo(t.type);
   document.getElementById("popImg").src = info.icon;
   document.getElementById("popRegion").textContent = v ? v.regionLabel : "Street sound";
   document.getElementById("popTitle").textContent = v ? v.dish : a.label;
-  document.getElementById("popCall").textContent = v ? v.call : a.vi;
+  document.getElementById("popCall").textContent = v ? v.call : "";
   document.getElementById("popEn").textContent = v ? v.en : "Part of the background of the street.";
   document.getElementById("popMore").hidden = !v;
   pop.hidden = false;
@@ -329,7 +347,7 @@ function openPop(t){
   if (top < 8) top = sr.bottom + 12 - vr.top;
   pop.style.left = Math.max(8, Math.min(vr.width - pw - 8, left)) + "px";
   pop.style.top = Math.max(8, Math.min(vr.height - ph - 8, top)) + "px";
-  meet.item = undefined; lastHear = 0;
+  lastHear = 0;
   (v ? document.getElementById("popMore") : document.getElementById("popBack")).focus();
 }
 function closePop(){
@@ -339,7 +357,7 @@ function closePop(){
 }
 document.getElementById("popBack").addEventListener("click", closePop);
 document.getElementById("popMore").addEventListener("click", () => {
-  const v = vendorById[popItem.type]; closePop(); openStory(v);
+  const t = popItem; closePop(); talkTo(t);
 });
 document.getElementById("popRemove").addEventListener("click", () => {
   const t = popItem; const label = tokenInfo(t.type).label;
@@ -374,6 +392,10 @@ document.getElementById("btnMixLoad").addEventListener("click", () => {
 });
 
 /* ---------------- Boot ---------------- */
+// How vendors address you in conversation ("Hey pretty!"), remembered on this device.
+const callMe = store.get("tiengrao.you", "friend");
+(document.querySelector(`#callMe input[value="${callMe}"]`) || document.getElementById("callFriend")).checked = true;
+document.getElementById("callMe").addEventListener("change", e => store.set("tiengrao.you", e.target.value));
 document.getElementById("btnEnter").addEventListener("click", () => {
   if (!audio()) return;
   entered = true;

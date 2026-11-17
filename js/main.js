@@ -130,7 +130,7 @@ const board = document.getElementById("board");
 const MAX_TOKENS = 10;
 let mix = store.get(MIX_KEY, null) || EXAMPLE_MIX.map(t => ({...t}));
 let mixUid = 0;
-mix.forEach(t => t.uid = ++mixUid);
+mix.forEach(t => { t.uid = ++mixUid; t.y = Math.max(minY(t.type), t.y); });
 const mixRun = {on:false, nodes:{}};
 function renderPalette(){
   document.getElementById("paletteVendors").innerHTML = VENDORS.map(v => `<button class="btn btn-ghost" type="button" data-add="${v.id}"><img class="sw" src="${tokenInfo(v.id).icon}" alt="">${v.dish}</button>`).join("");
@@ -199,7 +199,7 @@ function removeToken(uid){
   renderBoard();
 }
 function moveToken(t, x, y){
-  t.x = Math.max(4, Math.min(96, x)); t.y = Math.max(5, Math.min(95, y));
+  t.x = Math.max(4, Math.min(96, x)); t.y = Math.max(minY(t.type), Math.min(95, y));
   const el = board.querySelector(`.token[data-uid="${t.uid}"]`);
   if (el){ el.style.left = t.x + "%"; el.style.top = t.y + "%"; }
   const n = mixRun.nodes[t.uid];
@@ -243,7 +243,7 @@ document.getElementById("btnMixCopy").addEventListener("click", () => {
 });
 document.getElementById("btnMixLoad").addEventListener("click", () => {
   try{
-    const next = decodeMix(document.getElementById("mixCode").value, MAX_TOKENS).map(t => ({...t, uid:++mixUid}));
+    const next = decodeMix(document.getElementById("mixCode").value, MAX_TOKENS).map(t => ({...t, y:Math.max(minY(t.type), t.y), uid:++mixUid}));
     const wasOn = mixRun.on; stopMix(); mix = next; renderBoard(); if (wasOn) startMix();
     mixMsg(`Loaded a street with ${mix.length} sounds.`);
   }catch(e){ mixMsg("That code didn't work. Check it starts with TR1- and was copied in full."); }

@@ -286,6 +286,10 @@ function playSolo(v, mode){
 
 /* ---------------- Mixes: shared by the preview board and the full street ---------------- */
 const MIX_KEY = "tiengrao.mix";
+// The top of the street is rooftops. Vendors, motorbikes (and the player on Your street) stay on the road and pavement below it;
+// the temple bell, crickets and rain can go up on the roofs.
+const ROOF_LINE = 24;   // % from the top where the road begins
+const minY = type => vendorById[type] || type === "moto" ? ROOF_LINE : 5;
 const EXAMPLE_MIX = [
   {type:"banhgio", x:28, y:76}, {type:"hutieugo", x:74, y:50}, {type:"moto", x:18, y:40},
   {type:"bell", x:84, y:12}, {type:"crickets", x:44, y:14}

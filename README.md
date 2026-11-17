@@ -13,6 +13,8 @@ needed for Bootstrap 5, GSAP and Google Fonts, which load from CDNs.
 - `js/core.js` – shared by both pages: vendor data, Web Audio sound engine, captions, story panel
 - `js/main.js` – home page: night walk, Hear the change, Mix your street preview, contribution form
 - `js/street.js` – Your street: movement, distance-based hearing, vendor cards, build panel
+- `js/talk-script.js` – what each vendor says: greeting, story, shop, chats, goodbyes
+- `js/talk.js` – the conversation box that plays those scripts
 - `images/` – vendor and street-sound artwork
 
 ## Technologies
