@@ -5,7 +5,8 @@
    the way street sellers in Vietnam call out "Hey pretty!" or "Hey handsome!" to passers-by.
    greet  – said when you walk up and press E
    learn  – "Tell me about …"
-   shop   – intro line, things to buy (price in đồng), and what they say after you buy
+   shop   – intro line, things to buy, and what they say after you buy. Each item has a price in đồng,
+            how many they have each night (stock), a description (desc) and a short note shown in the buy panel
    chats  – the player's line (ask) and the vendor's reply
    bye    – happy: you bought something · sad: you left while they were talking · calm: any other goodbye
    The calls themselves stay in Vietnamese in quotes, with the meaning given in English, because they are the sound of the street. */
@@ -25,9 +26,15 @@ const TALK = {
     shop:{
       intro:"What would you like, {you}? Everything's fresh tonight.",
       items:[
-        {id:"banhmi-khong", name:"Plain roll", en:"Just the warm bread", price:5000},
-        {id:"banhmi-pate", name:"Pâté bánh mì", en:"Pâté, butter and pickles", price:20000},
-        {id:"banhmi-xiu-mai", name:"Meatball bánh mì", en:"Pork meatballs in tomato sauce", price:25000}
+        {id:"banhmi-khong", name:"Plain roll", en:"Just the warm bread", price:5000,
+         stock:15, desc:"A warm roll with a crackly crust and a soft, airy inside. Nothing added.",
+         note:"Some people only want the bread. Good bread doesn't need help."},
+        {id:"banhmi-pate", name:"Pâté bánh mì", en:"Pâté, butter and pickles", price:20000,
+         stock:10, desc:"Split and spread with pâté and butter, then filled with pickled carrot and radish, cucumber, coriander and chilli.",
+         note:"The one most people mean when they say bánh mì."},
+        {id:"banhmi-xiu-mai", name:"Meatball bánh mì", en:"Pork meatballs in tomato sauce", price:25000,
+         stock:5, desc:"Soft pork meatballs in a sweet tomato sauce, spooned into a roll so the bread soaks it all up.",
+         note:"Messy. Eat it leaning forward."}
       ],
       thanks:["[happy] Here you go, still warm. Careful, the crust crackles!"]
     },
@@ -64,9 +71,15 @@ const TALK = {
     shop:{
       intro:"How many, {you}?",
       items:[
-        {id:"hotvitlon-mot", name:"One egg", en:"With Vietnamese mint and salt", price:8000},
-        {id:"hotvitlon-ba", name:"Three eggs", en:"For sharing", price:22000},
-        {id:"hotvitlon-xao-me", name:"Tamarind eggs", en:"Stir-fried in tamarind sauce", price:30000}
+        {id:"hotvitlon-mot", name:"One egg", en:"With Vietnamese mint and salt", price:8000,
+         stock:20, desc:"One warm duck egg, served with Vietnamese mint, salt, pepper and a wedge of lime.",
+         note:"Crack the top and sip the broth first."},
+        {id:"hotvitlon-ba", name:"Three eggs", en:"For sharing", price:22000,
+         stock:8, desc:"Three eggs on one plate, with extra herbs and lime for sharing.",
+         note:"Cheaper than buying them one at a time. Grandma Sáu insists."},
+        {id:"hotvitlon-xao-me", name:"Tamarind eggs", en:"Stir-fried in tamarind sauce", price:30000,
+         stock:5, desc:"Eggs stir-fried in a sticky sweet-and-sour tamarind sauce with garlic and peanuts.",
+         note:"A favourite with students after evening class."}
       ],
       thanks:["[happy] Eat it while it's hot! Sip the broth first, okay?"]
     },
@@ -102,9 +115,15 @@ const TALK = {
     shop:{
       intro:"Which one catches your eye, {you}?",
       items:[
-        {id:"che-dau-den", name:"Black bean chè", en:"With coconut milk", price:15000},
-        {id:"che-ba-mau", name:"Three-colour chè", en:"Beans, jelly and coconut in layers", price:20000},
-        {id:"che-thai", name:"Thai-style chè", en:"Fruit, jelly and coconut milk", price:25000}
+        {id:"che-dau-den", name:"Black bean chè", en:"With coconut milk", price:15000,
+         stock:12, desc:"Soft black beans in sweet syrup, topped with coconut milk and crushed ice.",
+         note:"Said to cool you down on the hottest nights."},
+        {id:"che-ba-mau", name:"Three-colour chè", en:"Beans, jelly and coconut in layers", price:20000,
+         stock:10, desc:"Three layers in a tall glass: red beans, mung bean paste and green jelly, under coconut milk and ice.",
+         note:"Stir it all the way to the bottom before the first spoonful."},
+        {id:"che-thai", name:"Thai-style chè", en:"Fruit, jelly and coconut milk", price:25000,
+         stock:6, desc:"Jackfruit, longan, lychee and jelly in sweetened coconut milk, with plenty of ice.",
+         note:"Despite the name, it became popular in Saigon."}
       ],
       thanks:["[happy] Extra ice for you. Stir it all the way to the bottom!"]
     },
@@ -142,9 +161,15 @@ const TALK = {
     shop:{
       intro:"What'll it be, {you}? The broth has been going since this afternoon.",
       items:[
-        {id:"hutieu-thuong", name:"Pork noodle soup", en:"Rice noodles, pork and broth", price:25000},
-        {id:"mi-hoanh-thanh", name:"Wonton noodles", en:"Egg noodles with wontons", price:30000},
-        {id:"hutieu-dac-biet", name:"The special", en:"Extra pork, liver and quail eggs", price:35000}
+        {id:"hutieu-thuong", name:"Pork noodle soup", en:"Rice noodles, pork and broth", price:25000,
+         stock:15, desc:"Rice noodles in a clear pork broth, with sliced pork, chives and fried shallots.",
+         note:"The bowl the runners carry up the stairs most nights."},
+        {id:"mi-hoanh-thanh", name:"Wonton noodles", en:"Egg noodles with wontons", price:30000,
+         stock:10, desc:"Thin egg noodles and pork wontons in the same broth, with a few leaves of greens.",
+         note:"The wontons are folded at the cart every afternoon."},
+        {id:"hutieu-dac-biet", name:"The special", en:"Extra pork, liver and quail eggs", price:35000,
+         stock:5, desc:"The full bowl: extra pork, liver, quail eggs and a few prawns on top of the noodles.",
+         note:"For when you've had a very long day."}
       ],
       thanks:["[happy] Coming right up! Tock-tock, one bowl!"]
     },
@@ -182,9 +207,15 @@ const TALK = {
     shop:{
       intro:"One for now, {you}, or some to take home?",
       items:[
-        {id:"banhgio-thuong", name:"One dumpling", en:"Pork and mushroom in banana leaf", price:15000},
-        {id:"banhgio-trung-cut", name:"Quail egg dumpling", en:"With quail eggs inside", price:20000},
-        {id:"banhgio-cha", name:"Dumpling with pork roll", en:"With a slice of pork roll on the side", price:25000}
+        {id:"banhgio-thuong", name:"One dumpling", en:"Pork and mushroom in banana leaf", price:15000,
+         stock:12, desc:"A pyramid of soft rice batter around minced pork and wood-ear mushroom, steamed in banana leaf.",
+         note:"Unwrap it slowly. The steam is very hot."},
+        {id:"banhgio-trung-cut", name:"Quail egg dumpling", en:"With quail eggs inside", price:20000,
+         stock:8, desc:"The same dumpling with two quail eggs hidden in the filling.",
+         note:"Children always ask for this one."},
+        {id:"banhgio-cha", name:"Dumpling with pork roll", en:"With a slice of pork roll on the side", price:25000,
+         stock:5, desc:"A dumpling served with a slice of Vietnamese pork roll and a little chilli sauce.",
+         note:"A proper winter supper."}
       ],
       thanks:["[happy] Unwrap it slowly, the steam is very hot. Enjoy!"]
     },
@@ -220,9 +251,15 @@ const TALK = {
     shop:{
       intro:"What'll you have, {you}?",
       items:[
-        {id:"banhbao-chay", name:"Plain bun", en:"No filling", price:6000},
-        {id:"banhbao-thit", name:"Pork and egg bun", en:"The classic", price:15000},
-        {id:"banhbao-xa-xiu", name:"BBQ pork bun", en:"Sweet barbecue pork", price:18000}
+        {id:"banhbao-chay", name:"Plain bun", en:"No filling", price:6000,
+         stock:15, desc:"A plain, fluffy steamed bun with no filling. Good dipped in condensed milk.",
+         note:"Cheap, filling, and warm in your hands."},
+        {id:"banhbao-thit", name:"Pork and egg bun", en:"The classic", price:15000,
+         stock:10, desc:"Pork, a quail egg and Chinese sausage inside a soft white bun.",
+         note:"The bun the loudspeaker is calling about."},
+        {id:"banhbao-xa-xiu", name:"BBQ pork bun", en:"Sweet barbecue pork", price:18000,
+         stock:8, desc:"A bun filled with sweet, sticky barbecue pork.",
+         note:"Uncle Hùng's own favourite."}
       ],
       thanks:["[happy] Straight from the steamer. Mind your fingers!"]
     },

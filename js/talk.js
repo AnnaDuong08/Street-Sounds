@@ -1,18 +1,16 @@
 "use strict";
 /* The conversation box on Your street. Lines come from TALK in talk-script.js.
-   Portraits load from images/portraits/<vendor>-<mood>.png and shop pictures from images/shop/<item>.png;
-   until those files exist, a labelled placeholder shows instead. */
+   Portraits load from images/portraits/<vendor>-<mood>.png; until those files exist, a labelled placeholder shows instead.
+   Buying happens in the shop pop-up (shop.js). */
 // Wrapped so its helper names (say, menu, shop…) don't clash with street.js; only three functions are shared.
 const {openTalk, talkIsOpen, talkKey} = (() => {
   const ICONS = {
     learn:'<path d="M4 5h5a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3v11a2 2 0 0 1 2-2h6z"/>',
     shop:'<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',
     chat:'<path d="M4 5h16v11H10l-5 4v-4H4z"/>',
-    leave:'<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>',
-    back:'<path d="M15 6l-6 6 6 6"/>'
+    leave:'<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>'
   };
   const icon = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`;
-  const price = n => n.toLocaleString("en-US") + " ₫";
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const tk = {
@@ -81,12 +79,10 @@ const {openTalk, talkIsOpen, talkKey} = (() => {
     tk.next.hidden = true;
     tk.choices.innerHTML = list.map((c, i) => `
       <button class="talk-choice${c.done ? " done" : ""}" type="button" data-i="${i}">
-        ${c.img ? `<span class="item-img"><img src="${c.img}" alt=""><span class="ph">${c.imgLabel}</span></span>` : `<span class="ico">${icon(c.icon)}</span>`}
+        <span class="ico">${icon(c.icon)}</span>
         <span class="txt">${c.label}${c.sub ? `<small>${c.sub}</small>` : ""}</span>
-        ${c.price ? `<span class="price">${c.price}</span>` : ""}
         <kbd>${i + 1}</kbd>
       </button>`).join("");
-    tk.choices.querySelectorAll(".item-img img").forEach(img => img.addEventListener("error", () => img.parentNode.classList.add("missing")));
     tk.choices.onclick = e => { const b = e.target.closest(".talk-choice"); if (b) list[+b.dataset.i].go(); };
     tk.choices.hidden = false;
     tk.choices.querySelector("button").focus({preventScroll:true});
@@ -100,12 +96,12 @@ const {openTalk, talkIsOpen, talkKey} = (() => {
       {icon:"leave", label:"I should get going.", go:farewell}
     ]);
   }
+  // The shop pop-up lives in shop.js; afterwards the vendor thanks you if you bought anything.
   function shop(){
-    choices([
-      ...conv.s.shop.items.map(it => ({img:`images/shop/${it.id}.png`, imgLabel:it.id, label:it.name, sub:it.en, price:price(it.price),
-        go:() => { conv.bought = true; say(conv.s.shop.thanks, menu); }})),
-      {icon:"back", label:"Never mind.", go:menu}
-    ]);
+    tk.next.hidden = true;
+    openShop(conv.id, boughtAny => {
+      if (boughtAny){ conv.bought = true; say(conv.s.shop.thanks, menu); } else menu();
+    });
   }
   function farewell(){
     const mood = conv.bought ? "happy" : stillTalking() ? "sad" : "calm";
@@ -135,6 +131,7 @@ const {openTalk, talkIsOpen, talkKey} = (() => {
   const talkIsOpen = () => conv.open;
   // Keys while talking: E or Space moves on, number keys pick a reply, Escape says goodbye.
   function talkKey(e){
+    if (shopIsOpen()){ shopKey(e); return; }
     const k = e.key.toLowerCase();
     if (k === "escape"){ e.preventDefault(); conv.phase === "farewell" ? closeTalk() : farewell(); return; }
     if (k === "e" && !tk.next.hidden){ e.preventDefault(); advance(); return; }

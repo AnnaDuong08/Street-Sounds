@@ -15,6 +15,7 @@ needed for Bootstrap 5, GSAP and Google Fonts, which load from CDNs.
 - `js/street.js` – Your street: movement, distance-based hearing, vendor cards, build panel
 - `js/talk-script.js` – what each vendor says: greeting, story, shop, chats, goodbyes
 - `js/talk.js` – the conversation box that plays those scripts
+- `js/shop.js` – the vendor shop pop-up: item cards, buy panel, wallet and nightly stock
 - `images/` – vendor and street-sound artwork
 
 ## Technologies
