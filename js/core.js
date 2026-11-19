@@ -75,10 +75,6 @@ function vowelOf(syl){
 function syllables(text){
   return text.replace(/[!?.,…]/g," ").split(/\s+/).filter(Boolean);
 }
-function tonesHtml(v){
-  if (v.clapper) return '<span>No words: a wooden <b>clapper</b></span>';
-  return syllables(v.call).map(s => { const t = TONES[toneOf(s)]; return `<span>${s} · <b>${t.name}</b> ${t.en}</span>`; }).join("");
-}
 
 /* ---------------- Audio engine ---------------- */
 let ctx = null, master, analyser, noiseBuf, muted = false;
@@ -372,22 +368,31 @@ function openStory(v){
   document.getElementById("storyTime").textContent = v.time;
   document.getElementById("storyVehicle").textContent = v.vehicleLabel;
   document.getElementById("storyListen").textContent = v.listen;
-  document.getElementById("storyTones").innerHTML = tonesHtml(v);
   bootstrap.Offcanvas.getOrCreateInstance(document.getElementById("storyPanel")).show();
 }
-document.getElementById("storyPlay").addEventListener("click", () => storyVendor && playSolo(storyVendor, "live"));
+// Wire a control only if this page has it (not every page has the story panel, captions or mute)
+function on(id, ev, fn){ const el = document.getElementById(id); if (el) el.addEventListener(ev, fn); }
+on("storyPlay", "click", () => storyVendor && playSolo(storyVendor, "live"));
 
 /* ---------------- Global controls ---------------- */
-document.getElementById("btnMute").addEventListener("click", e => {
+on("btnMute", "click", e => {
   muted = !muted;
   if (master) master.gain.setTargetAtTime(muted ? 0 : 0.9, ctx.currentTime, 0.05);
   e.currentTarget.querySelector("span").textContent = muted ? "Unmute" : "Mute all";
   e.currentTarget.querySelector("img").src = `images/icons/${muted ? "sound-off" : "sound-on"}.png`;
   e.currentTarget.setAttribute("aria-pressed", String(muted));
 });
-document.getElementById("btnCaptions").addEventListener("click", e => {
+on("btnCaptions", "click", e => {
   captionsOn = !captionsOn;
-  if (!captionsOn) document.getElementById("captionBar").classList.remove("show");
+  if (!captionsOn && document.getElementById("captionBar")) document.getElementById("captionBar").classList.remove("show");
   e.currentTarget.querySelector("span").textContent = captionsOn ? "Captions on" : "Captions off";
   e.currentTarget.setAttribute("aria-pressed", String(captionsOn));
 });
+
+/* ---------------- Page helpers ---------------- */
+// Small pop-up message (pages with a #toast)
+function toast(msg){ document.getElementById("toastBody").textContent = msg; bootstrap.Toast.getOrCreateInstance(document.getElementById("toast"), {delay:3500}).show(); }
+// Close the phone menu after picking a link
+document.querySelectorAll("#navLinks .nav-link").forEach(a => a.addEventListener("click", () => {
+  const c = bootstrap.Collapse.getInstance(document.getElementById("navLinks")); if (c) c.hide();
+}));

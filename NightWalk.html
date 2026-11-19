@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Night Walk · Tiếng Rao</title>
+<meta name="description" content="Scroll along a night street of Vietnamese street vendors and hear their calls pan past.">
+<link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
+<link rel="apple-touch-icon" href="images/brand/favicon-180.png">
+<meta property="og:image" content="images/home/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css?v=31">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to the content</a>
+
+<div class="tr-app" data-bs-theme="dark">
+
+<nav class="navbar navbar-expand-lg tr-nav" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand" href="HomePage.html">Tiếng Rao</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navLinks">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link active" href="NightWalk.html" aria-current="page">Night walk</a></li>
+        <li class="nav-item"><a class="nav-link" href="HearTheChange.html">Hear the change</a></li>
+        <li class="nav-item"><a class="nav-link" href="MixYourStreet.html">Mix your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="YourStreet.html">Your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="AddACall.html">Add a call</a></li>
+      </ul>
+      <div class="d-flex gap-2 py-2 py-md-0">
+        <button class="btn btn-sm btn-ghost" id="btnCaptions" type="button" aria-pressed="true"><img class="ico" src="images/icons/captions.png" alt=""><span>Captions on</span></button>
+        <button class="btn btn-sm btn-ghost" id="btnMute" type="button" aria-pressed="false"><img class="ico" src="images/icons/sound-on.png" alt=""><span>Mute all</span></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="HomePage.html">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Night walk</li>
+      </ol>
+    </nav>
+    <div class="section-head mb-0">
+      <div>
+        <h1 class="display">Night walk</h1>
+        <p class="lede mb-0">Turn the sound on and scroll along the street. Vendors close to the middle of the screen are loud; the ones further away fade into the background, left and right, like they would in a real alley.</p>
+      </div>
+      <div class="walk-controls">
+        <button class="btn btn-lamp" id="btnWalk" type="button" aria-pressed="false">Sound on: start walking</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+<section class="band" aria-label="The street">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <ul class="nav region-pills gap-2" id="regionPills" role="tablist" aria-label="Filter by region">
+        <li class="nav-item"><button class="nav-link active" data-region="all" type="button">All regions</button></li>
+        <li class="nav-item"><button class="nav-link" data-region="N" type="button">North</button></li>
+        <li class="nav-item"><button class="nav-link" data-region="C" type="button">Central</button></li>
+        <li class="nav-item"><button class="nav-link" data-region="S" type="button">South</button></li>
+      </ul>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-ghost" id="walkLeft" type="button" aria-label="Walk left">← Walk back</button>
+        <button class="btn btn-sm btn-ghost" id="walkRight" type="button" aria-label="Walk right">Walk on →</button>
+      </div>
+    </div>
+
+    <div class="street-wrap">
+      <div class="street" id="street" tabindex="0" aria-label="Street of vendors. Scroll sideways to walk."></div>
+    </div>
+    <p class="walk-status mt-2" id="walkStatus" aria-live="polite">Sound is off. Press "start walking" or tap any stall to hear its call.</p>
+    <aside class="proto-note" role="note"><span class="proto-tag">Prototype note</span><p class="mb-0">The calls are synthesised placeholders shaped by the tones of each call's words. The final site will play a field recording for each vendor, and offer more regions and vendors to filter by.</p></aside>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <p class="mb-1"><span class="display" style="color:var(--sodium)">Tiếng Rao</span></p>
+        <p class="mb-0 text-secondary">A sound-map of Vietnam's street-vendor calls · CSCU9X5 prototype, 2026</p>
+      </div>
+      <nav aria-label="Site map">
+        <p class="label mb-2">Site map</p>
+        <ul class="sitemap">
+          <li><a href="HomePage.html">Home</a></li>
+          <li><a href="NightWalk.html">Night walk</a></li>
+          <li><a href="HearTheChange.html">Hear the change</a></li>
+          <li><a href="MixYourStreet.html">Mix your street</a></li>
+          <li><a href="YourStreet.html">Your street</a></li>
+          <li><a href="AddACall.html">Add a call</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="storyPanel" aria-labelledby="storyTitle">
+  <div class="offcanvas-header">
+    <div>
+      <p class="label mb-1" id="storyRegion"></p>
+      <h2 class="offcanvas-title display h3 mb-0" id="storyTitle"></h2>
+    </div>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-grid gap-3 align-content-start">
+    <div id="storyArt"></div>
+    <div>
+      <p class="mb-0 fs-5 fst-italic" id="storyCall"></p>
+      <p class="text-secondary mb-0" id="storyEn"></p>
+    </div>
+    <button class="btn btn-lamp" id="storyPlay" type="button"><img class="ico" src="images/icons/play.png" alt=""> Play the call</button>
+    <p class="mb-0" id="storyText"></p>
+    <dl class="story-fact">
+      <dt>Heard</dt><dd id="storyTime"></dd>
+      <dt>Carried on</dt><dd id="storyVehicle"></dd>
+      <dt>Listen for</dt><dd id="storyListen"></dd>
+    </dl>
+  </div>
+</div>
+
+<div class="caption-bar" id="captionBar" aria-live="polite">
+  <div class="inner"><span class="vi" id="capVi"></span><span class="en" id="capEn"></span></div>
+</div>
+
+</div>
+
+<script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/core.js?v=31"></script>
+<script src="js/walk.js?v=31"></script>
+
+</body>
+</html>

@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="css/style.css?v=20">
+<link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css?v=31">
 </head>
 <body class="street-page">
 
@@ -19,7 +19,18 @@
 
 <nav class="navbar tr-nav" aria-label="Street">
   <div class="container-fluid street-bar">
-    <a class="navbar-brand" href="index.html#mix" aria-label="Back to Tiếng Rao home">← Tiếng Rao</a>
+    <a class="navbar-brand" href="HomePage.html" aria-label="Tiếng Rao home">← Tiếng Rao</a>
+    <div class="dropdown">
+      <button class="btn btn-sm btn-ghost dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Pages</button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="HomePage.html">Home</a></li>
+        <li><a class="dropdown-item" href="NightWalk.html">Night walk</a></li>
+        <li><a class="dropdown-item" href="HearTheChange.html">Hear the change</a></li>
+        <li><a class="dropdown-item" href="MixYourStreet.html">Mix your street</a></li>
+        <li><a class="dropdown-item active" href="YourStreet.html" aria-current="page">Your street</a></li>
+        <li><a class="dropdown-item" href="AddACall.html">Add a call</a></li>
+      </ul>
+    </div>
     <span class="street-title">Your street</span>
     <div class="d-flex gap-2 ms-auto">
       <button class="btn btn-sm btn-ghost bag-btn" id="btnBag" type="button" aria-controls="bag">
@@ -127,7 +138,6 @@
       <div class="dv-body">
         <div>
           <div class="dv-map" id="dvMap">
-            <img class="dv-bg" src="images/game/map.png" alt="" onerror="this.remove()">
             <svg id="dvSvg" aria-hidden="true"></svg>
             <div id="dvPins"></div>
             <span class="dv-scooter" id="dvScooter" hidden><img src="images/game/scooter.png" alt="" onerror="this.onerror=null;this.src='images/ambient/moto.png'"></span>
@@ -236,7 +246,15 @@
           <input type="radio" class="btn-check" name="callMe" id="callFriend" value="friend"><label class="btn btn-ghost" for="callFriend">Friend</label>
         </div>
       </fieldset>
+      <fieldset class="mb-3" id="skinAsk" hidden>
+        <legend class="label mb-2">Are you a girl or a boy?</legend>
+        <div class="btn-group w-100" role="group" id="skinPick">
+          <input type="radio" class="btn-check" name="skin" id="skinGirl" value="girl"><label class="btn btn-ghost skin-btn" for="skinGirl"><img src="images/player/girl/front-idle.png" alt=""> Girl</label>
+          <input type="radio" class="btn-check" name="skin" id="skinBoy" value="boy"><label class="btn btn-ghost skin-btn" for="skinBoy"><img src="images/player/boy/front-idle.png" alt=""> Boy</label>
+        </div>
+      </fieldset>
       <button class="btn btn-lamp w-100" id="btnEnter" type="button">Turn on sound and step in</button>
+      <aside class="proto-note mt-3 mb-0" role="note"><span class="proto-tag">Prototype note</span><p class="mb-0">Calls are synthesised placeholders and the money is play money. Your street, wallet and bag are saved only in this browser. The final site would use real recordings and let you share your street with others.</p></aside>
     </div>
   </div>
 </main>
@@ -286,7 +304,6 @@
       <dt>Carried on</dt><dd id="storyVehicle"></dd>
       <dt>Listen for</dt><dd id="storyListen"></dd>
     </dl>
-    <div class="tones" id="storyTones"></div>
     <button class="btn btn-ghost" type="button" data-bs-dismiss="offcanvas">Back to the street</button>
   </div>
 </div>
@@ -297,14 +314,14 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
 <!-- ?v= makes browsers fetch fresh copies after an update; bump it when these files change -->
-<script src="js/core.js?v=20"></script>
-<script src="js/talk-script.js?v=20"></script>
-<script src="js/shop.js?v=20"></script>
-<script src="js/delivery.js?v=20"></script>
-<script src="js/talk.js?v=20"></script>
-<script src="js/street.js?v=20"></script>
+<script src="js/core.js?v=31"></script>
+<script src="js/talk-script.js?v=31"></script>
+<script src="js/shop.js?v=31"></script>
+<script src="js/delivery.js?v=31"></script>
+<script src="js/talk.js?v=31"></script>
+<script src="js/street.js?v=31"></script>
 
 </body>
 </html>

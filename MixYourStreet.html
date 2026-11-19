@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mix Your Street · Tiếng Rao</title>
+<meta name="description" content="Build your own Vietnamese night street from vendors and street sounds, then walk it.">
+<link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
+<link rel="apple-touch-icon" href="images/brand/favicon-180.png">
+<meta property="og:image" content="images/home/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css?v=31">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to the content</a>
+
+<div class="tr-app" data-bs-theme="dark">
+
+<nav class="navbar navbar-expand-lg tr-nav" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand" href="HomePage.html">Tiếng Rao</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navLinks">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="NightWalk.html">Night walk</a></li>
+        <li class="nav-item"><a class="nav-link" href="HearTheChange.html">Hear the change</a></li>
+        <li class="nav-item"><a class="nav-link active" href="MixYourStreet.html" aria-current="page">Mix your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="YourStreet.html">Your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="AddACall.html">Add a call</a></li>
+      </ul>
+      <div class="d-flex gap-2 py-2 py-md-0">
+        <button class="btn btn-sm btn-ghost" id="btnCaptions" type="button" aria-pressed="true"><img class="ico" src="images/icons/captions.png" alt=""><span>Captions on</span></button>
+        <button class="btn btn-sm btn-ghost" id="btnMute" type="button" aria-pressed="false"><img class="ico" src="images/icons/sound-on.png" alt=""><span>Mute all</span></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="HomePage.html">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Mix your street</li>
+      </ol>
+    </nav>
+    <div class="section-head mb-0">
+      <div>
+        <h1 class="display">Mix your street</h1>
+        <p class="lede mb-0">Build your own soundscape. Add vendors and street sounds, then drag them around: the closer a sound is to you, the louder and clearer it gets. When you're ready, step onto your street and walk it yourself.</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-lamp" id="btnFullStreet" href="YourStreet.html">Step onto your street →</a>
+        <button class="btn btn-ghost" id="btnMixPlay" type="button" aria-pressed="false">Play preview</button>
+        <button class="btn btn-ghost" id="btnMixClear" type="button">Clear</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+<section class="band" aria-label="Your board">
+  <div class="container">
+    <div class="mix-grid">
+      <div>
+        <div class="board" id="board" aria-label="Street board. Use Tab to pick a sound and the arrow keys to move it.">
+          <span class="zone" style="top:6%">Rooftops</span>
+          <span class="zone" style="top:28%">Road</span>
+          <span class="zone" style="top:72%">Pavement</span>
+          <div class="listener"><img src="images/home/listener.png" alt=""><span>You</span></div>
+        </div>
+        <p class="form-text mt-2 mb-0">Drag a sound to move it. With the keyboard, Tab to a sound, use the arrow keys to move it and press Delete to remove it.</p>
+      </div>
+      <div class="d-grid gap-3 align-content-start">
+        <div class="panel">
+          <p class="label mb-2">Add a vendor</p>
+          <div class="palette" id="paletteVendors"></div>
+          <p class="label mt-3 mb-2">Add a street sound</p>
+          <div class="palette" id="paletteAmbient"></div>
+          <p class="form-text mt-2 mb-0" id="mixCount"></p>
+        </div>
+        <div class="panel">
+          <p class="label mb-2">Save and share</p>
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <button class="btn btn-sm btn-ghost" id="btnMixSave" type="button">Save on this device</button>
+            <button class="btn btn-sm btn-ghost" id="btnMixCopy" type="button">Copy share code</button>
+          </div>
+          <label class="form-label small" for="mixCode">Paste a friend's code</label>
+          <div class="input-group input-group-sm">
+            <input class="form-control share-code" id="mixCode" type="text" placeholder="TR1-…" autocomplete="off">
+            <button class="btn btn-ghost" id="btnMixLoad" type="button">Load</button>
+          </div>
+          <p class="form-text mb-0 mt-2" id="mixMsg" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+    <aside class="proto-note" role="note"><span class="proto-tag">Prototype note</span><p class="mb-0">Saved streets and share codes stay in this browser. The final site would let you publish a street to a public gallery and open friends' streets from a link.</p></aside>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <p class="mb-1"><span class="display" style="color:var(--sodium)">Tiếng Rao</span></p>
+        <p class="mb-0 text-secondary">A sound-map of Vietnam's street-vendor calls · CSCU9X5 prototype, 2026</p>
+      </div>
+      <nav aria-label="Site map">
+        <p class="label mb-2">Site map</p>
+        <ul class="sitemap">
+          <li><a href="HomePage.html">Home</a></li>
+          <li><a href="NightWalk.html">Night walk</a></li>
+          <li><a href="HearTheChange.html">Hear the change</a></li>
+          <li><a href="MixYourStreet.html">Mix your street</a></li>
+          <li><a href="YourStreet.html">Your street</a></li>
+          <li><a href="AddACall.html">Add a call</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+
+<div class="caption-bar" id="captionBar" aria-live="polite">
+  <div class="inner"><span class="vi" id="capVi"></span><span class="en" id="capEn"></span></div>
+</div>
+
+</div>
+
+<script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/core.js?v=31"></script>
+<script src="js/mix.js?v=31"></script>
+
+</body>
+</html>

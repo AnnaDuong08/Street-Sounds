@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tiếng Rao · the sung calls of Vietnam's street vendors</title>
+<meta name="description" content="Tiếng Rao: an interactive sound-map of Vietnam's street-vendor calls.">
+<link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
+<link rel="apple-touch-icon" href="images/brand/favicon-180.png">
+<meta property="og:image" content="images/home/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css?v=31">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to the content</a>
+
+<div class="tr-app" data-bs-theme="dark">
+
+<nav class="navbar navbar-expand-lg tr-nav" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand" href="HomePage.html" aria-current="page">Tiếng Rao</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navLinks">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="NightWalk.html">Night walk</a></li>
+        <li class="nav-item"><a class="nav-link" href="HearTheChange.html">Hear the change</a></li>
+        <li class="nav-item"><a class="nav-link" href="MixYourStreet.html">Mix your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="YourStreet.html">Your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="AddACall.html">Add a call</a></li>
+      </ul>
+      <div class="d-flex gap-2 py-2 py-md-0">
+        <button class="btn btn-sm btn-ghost" id="btnCaptions" type="button" aria-pressed="true"><img class="ico" src="images/icons/captions.png" alt=""><span>Captions on</span></button>
+        <button class="btn btn-sm btn-ghost" id="btnMute" type="button" aria-pressed="false"><img class="ico" src="images/icons/sound-on.png" alt=""><span>Mute all</span></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="skyline" aria-hidden="true"></canvas>
+  <div class="container">
+    <h1 class="display hero-anim">Tiếng Rao</h1>
+    <p class="sub hero-anim">The sung calls of Vietnam's street vendors, before loudspeakers and delivery apps replace them.</p>
+    <div class="d-flex flex-wrap gap-2 hero-anim">
+      <a class="btn btn-lamp" href="NightWalk.html">Start the night walk</a>
+      <a class="btn btn-ghost" href="YourStreet.html">Walk your own street</a>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+<section class="band" aria-labelledby="meetTitle">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2 class="display" id="meetTitle">Meet the vendors</h2>
+        <p class="lede mb-0">Six sellers, six calls. Each one is a small piece of music: the melody comes from the tones of the Vietnamese words.</p>
+      </div>
+    </div>
+    <div id="vendorCarousel" class="carousel slide vendor-carousel" data-bs-ride="carousel" data-bs-interval="8000" aria-label="Vendors">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#vendorCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Auntie Lan"></button>
+        <button type="button" data-bs-target="#vendorCarousel" data-bs-slide-to="1" aria-label="Grandma Sáu"></button>
+        <button type="button" data-bs-target="#vendorCarousel" data-bs-slide-to="2" aria-label="Hoa"></button>
+        <button type="button" data-bs-target="#vendorCarousel" data-bs-slide-to="3" aria-label="Tâm"></button>
+        <button type="button" data-bs-target="#vendorCarousel" data-bs-slide-to="4" aria-label="Auntie Thu"></button>
+        <button type="button" data-bs-target="#vendorCarousel" data-bs-slide-to="5" aria-label="Uncle Hùng"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="vendor-slide">
+            <img class="vendor-face" src="images/portraits/banhmi-happy.png" alt="Portrait of Auntie Lan">
+            <div>
+              <p class="label mb-1">Auntie Lan</p>
+              <p class="slide-call mb-1">Bánh mì nóng giòn đây!</p>
+              <p class="text-secondary mb-2">Hot, crispy bread rolls here!</p>
+              <p class="mb-3">Rides from alley to alley on an old green bicycle every evening.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-lamp" type="button" data-play="banhmi"><img class="ico" src="images/icons/play.png" alt=""> Hear the call</button>
+                <button class="btn btn-sm btn-ghost" type="button" data-story="banhmi">Story</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="vendor-slide">
+            <img class="vendor-face" src="images/portraits/hotvitlon-happy.png" alt="Portrait of Grandma Sáu">
+            <div>
+              <p class="label mb-1">Grandma Sáu</p>
+              <p class="slide-call mb-1">Hột vịt lộn đây!</p>
+              <p class="text-secondary mb-2">Balut eggs here!</p>
+              <p class="mb-3">Has carried the same shoulder pole for forty years and sells late into the night.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-lamp" type="button" data-play="hotvitlon"><img class="ico" src="images/icons/play.png" alt=""> Hear the call</button>
+                <button class="btn btn-sm btn-ghost" type="button" data-story="hotvitlon">Story</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="vendor-slide">
+            <img class="vendor-face" src="images/portraits/che-happy.png" alt="Portrait of Hoa">
+            <div>
+              <p class="label mb-1">Hoa</p>
+              <p class="slide-call mb-1">Ai ăn chè không?</p>
+              <p class="text-secondary mb-2">Who wants sweet soup?</p>
+              <p class="mb-3">Pushes a glass-sided cart so you can choose your chè by colour.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-lamp" type="button" data-play="che"><img class="ico" src="images/icons/play.png" alt=""> Hear the call</button>
+                <button class="btn btn-sm btn-ghost" type="button" data-story="che">Story</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="vendor-slide">
+            <img class="vendor-face" src="images/portraits/hutieugo-happy.png" alt="Portrait of Tâm">
+            <div>
+              <p class="label mb-1">Tâm</p>
+              <p class="slide-call mb-1">Lốc cốc… lốc cốc…</p>
+              <p class="text-secondary mb-2">The knock of the noodle runners</p>
+              <p class="mb-3">Calls with two bamboo sticks instead of his voice, then runs the bowls up the stairs.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-lamp" type="button" data-play="hutieugo"><img class="ico" src="images/icons/play.png" alt=""> Hear the call</button>
+                <button class="btn btn-sm btn-ghost" type="button" data-story="hutieugo">Story</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="vendor-slide">
+            <img class="vendor-face" src="images/portraits/banhgio-happy.png" alt="Portrait of Auntie Thu">
+            <div>
+              <p class="label mb-1">Auntie Thu</p>
+              <p class="slide-call mb-1">Ai bánh giò nóng đây!</p>
+              <p class="text-secondary mb-2">Who wants hot rice dumplings?</p>
+              <p class="mb-3">Walks Hà Nội's Old Quarter on winter nights with a steaming basket.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-lamp" type="button" data-play="banhgio"><img class="ico" src="images/icons/play.png" alt=""> Hear the call</button>
+                <button class="btn btn-sm btn-ghost" type="button" data-story="banhgio">Story</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="vendor-slide">
+            <img class="vendor-face" src="images/portraits/banhbao-happy.png" alt="Portrait of Uncle Hùng">
+            <div>
+              <p class="label mb-1">Uncle Hùng</p>
+              <p class="slide-call mb-1">Bánh bao nóng hổi đây!</p>
+              <p class="text-secondary mb-2">Piping-hot steamed buns here!</p>
+              <p class="mb-3">Plays his call from a loudspeaker now, and secretly misses calling it himself.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-lamp" type="button" data-play="banhbao"><img class="ico" src="images/icons/play.png" alt=""> Hear the call</button>
+                <button class="btn btn-sm btn-ghost" type="button" data-story="banhbao">Story</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#vendorCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous vendor</span></button>
+      <button class="carousel-control-next" type="button" data-bs-target="#vendorCarousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next vendor</span></button>
+    </div>
+    <aside class="proto-note" role="note"><span class="proto-tag">Prototype note</span><p class="mb-0">Every call here is synthesised in the browser as a placeholder. The final site will use field recordings of real vendors, or Creative Commons recordings with credits.</p></aside>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="exploreTitle">
+  <div class="container">
+    <h2 class="display" id="exploreTitle">Five ways to listen</h2>
+    <p class="lede">Pick where to start. Every page works on its own, and the top menu takes you between them.</p>
+    <div class="row g-3">
+      <div class="col-sm-6 col-lg-4">
+        <a class="feature-card" href="NightWalk.html">
+          <img src="images/vendors/hotvitlon.png" alt="">
+          <span class="feature-title">Night walk</span>
+          <span class="feature-text">Scroll along a row of stalls. The vendor in the middle is loudest; the rest fade off to the left and right, like a real alley.</span>
+          <span class="feature-go">Open night walk →</span>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <a class="feature-card" href="HearTheChange.html">
+          <img src="images/vendors/banhbao.png" alt="">
+          <span class="feature-title">Hear the change</span>
+          <span class="feature-text">Compare a vendor singing their call with the same call played from a cheap loudspeaker, and watch the waveform change.</span>
+          <span class="feature-go">Open hear the change →</span>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <a class="feature-card" href="MixYourStreet.html">
+          <img src="images/home/listener.png" alt="">
+          <span class="feature-title">Mix your street</span>
+          <span class="feature-text">Drag vendors and street sounds onto a board and hear them from where you stand. Save it or share it as a code.</span>
+          <span class="feature-go">Open mix your street →</span>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <a class="feature-card" href="YourStreet.html">
+          <img src="images/player/girl/front-walk-1.png" alt="">
+          <span class="feature-title">Your street</span>
+          <span class="feature-text">Walk your street in a small game: talk to vendors, buy food, ride a motorbike and run deliveries.</span>
+          <span class="feature-go">Open your street →</span>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <a class="feature-card" href="AddACall.html">
+          <img src="images/icons/chat.png" alt="">
+          <span class="feature-title">Add a call</span>
+          <span class="feature-text">Know a call from your own city? Send in the words, what it means and, if you have one, a recording.</span>
+          <span class="feature-go">Open add a call →</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="accordion mb-4" id="aboutAcc">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aboutBody" aria-expanded="false" aria-controls="aboutBody">About this prototype</button>
+        </h2>
+        <div id="aboutBody" class="accordion-collapse collapse" data-bs-parent="#aboutAcc">
+          <div class="accordion-body">
+            <p>Tiếng Rao is a CSCU9X5 web design prototype built with HTML5, CSS3, Bootstrap 5 and JavaScript. All sound is generated live with the Web Audio API, and each call's melody follows the Vietnamese tones of its words. The final site will replace these placeholders with field recordings, or Creative Commons recordings with credits.</p>
+            <p class="mb-0">Saved streets, purchases and submitted calls are stored only in this browser. Nothing is sent anywhere.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <p class="mb-1"><span class="display" style="color:var(--sodium)">Tiếng Rao</span></p>
+        <p class="mb-0 text-secondary">A sound-map of Vietnam's street-vendor calls · CSCU9X5 prototype, 2026</p>
+      </div>
+      <nav aria-label="Site map">
+        <p class="label mb-2">Site map</p>
+        <ul class="sitemap">
+          <li><a href="HomePage.html">Home</a></li>
+          <li><a href="NightWalk.html">Night walk</a></li>
+          <li><a href="HearTheChange.html">Hear the change</a></li>
+          <li><a href="MixYourStreet.html">Mix your street</a></li>
+          <li><a href="YourStreet.html">Your street</a></li>
+          <li><a href="AddACall.html">Add a call</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="storyPanel" aria-labelledby="storyTitle">
+  <div class="offcanvas-header">
+    <div>
+      <p class="label mb-1" id="storyRegion"></p>
+      <h2 class="offcanvas-title display h3 mb-0" id="storyTitle"></h2>
+    </div>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-grid gap-3 align-content-start">
+    <div id="storyArt"></div>
+    <div>
+      <p class="mb-0 fs-5 fst-italic" id="storyCall"></p>
+      <p class="text-secondary mb-0" id="storyEn"></p>
+    </div>
+    <button class="btn btn-lamp" id="storyPlay" type="button"><img class="ico" src="images/icons/play.png" alt=""> Play the call</button>
+    <p class="mb-0" id="storyText"></p>
+    <dl class="story-fact">
+      <dt>Heard</dt><dd id="storyTime"></dd>
+      <dt>Carried on</dt><dd id="storyVehicle"></dd>
+      <dt>Listen for</dt><dd id="storyListen"></dd>
+    </dl>
+  </div>
+</div>
+
+<div class="caption-bar" id="captionBar" aria-live="polite">
+  <div class="inner"><span class="vi" id="capVi"></span><span class="en" id="capEn"></span></div>
+</div>
+
+</div>
+
+<script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="lib/gsap/gsap.min.js"></script>
+<script src="js/core.js?v=31"></script>
+<script src="js/home.js?v=31"></script>
+
+</body>
+</html>

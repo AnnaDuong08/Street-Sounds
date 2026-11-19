@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hear the Change · Tiếng Rao</title>
+<meta name="description" content="Compare a street vendor's live call with the same call played from a loudspeaker.">
+<link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
+<link rel="apple-touch-icon" href="images/brand/favicon-180.png">
+<meta property="og:image" content="images/home/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css?v=31">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to the content</a>
+
+<div class="tr-app" data-bs-theme="dark">
+
+<nav class="navbar navbar-expand-lg tr-nav" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand" href="HomePage.html">Tiếng Rao</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navLinks">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="NightWalk.html">Night walk</a></li>
+        <li class="nav-item"><a class="nav-link active" href="HearTheChange.html" aria-current="page">Hear the change</a></li>
+        <li class="nav-item"><a class="nav-link" href="MixYourStreet.html">Mix your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="YourStreet.html">Your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="AddACall.html">Add a call</a></li>
+      </ul>
+      <div class="d-flex gap-2 py-2 py-md-0">
+        <button class="btn btn-sm btn-ghost" id="btnCaptions" type="button" aria-pressed="true"><img class="ico" src="images/icons/captions.png" alt=""><span>Captions on</span></button>
+        <button class="btn btn-sm btn-ghost" id="btnMute" type="button" aria-pressed="false"><img class="ico" src="images/icons/sound-on.png" alt=""><span>Mute all</span></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="HomePage.html">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Hear the change</li>
+      </ol>
+    </nav>
+    <div class="section-head mb-0">
+      <div>
+        <h1 class="display">Hear the change</h1>
+        <p class="lede mb-0">More and more vendors play a recording from a loudspeaker instead of calling themselves. Compare the two: the live voice bends and drifts with the tones of the words, while the recording repeats exactly and the cheap speaker cuts off the warmth.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+<section class="band" aria-label="Compare the two">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-5">
+        <h2 class="h4">How to compare</h2>
+        <p>Choose a call, then press <b>Live voice</b> and <b>Loudspeaker loop</b> in turn. Watch the waveform: the live voice moves and changes, the loudspeaker version is harsher and identical every time.</p>
+        <p class="mb-0">Vietnamese is tonal, so the melody of a call comes from its words. Each melody here follows the tone marks in the call's text.</p>
+      </div>
+      <div class="col-lg-7">
+        <div class="panel d-grid gap-3">
+          <div>
+            <label class="form-label" for="changeVendor">Choose a call</label>
+            <select class="form-select" id="changeVendor"></select>
+          </div>
+          <div class="compare">
+            <button class="btn btn-ghost" id="btnLive" type="button"><span>Live voice</span><small>Sung by the vendor, with natural drift</small></button>
+            <button class="btn btn-ghost" id="btnLoud" type="button"><span>Loudspeaker loop</span><small>Recorded once, played on repeat</small></button>
+          </div>
+          <canvas id="scope" aria-hidden="true"></canvas>
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <button class="btn btn-sm btn-ghost" id="btnSpeak" type="button">Hear the words spoken</button>
+            <span class="form-text" id="speakNote">Uses your device's Vietnamese voice, if it has one.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="proto-note" role="note"><span class="proto-tag">Prototype note</span><p class="mb-0">Both versions are made by the same synthesiser, with a loudspeaker filter added to the second. The final site will pair a real field recording of a vendor's voice with a recording of their loudspeaker.</p></aside>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <p class="mb-1"><span class="display" style="color:var(--sodium)">Tiếng Rao</span></p>
+        <p class="mb-0 text-secondary">A sound-map of Vietnam's street-vendor calls · CSCU9X5 prototype, 2026</p>
+      </div>
+      <nav aria-label="Site map">
+        <p class="label mb-2">Site map</p>
+        <ul class="sitemap">
+          <li><a href="HomePage.html">Home</a></li>
+          <li><a href="NightWalk.html">Night walk</a></li>
+          <li><a href="HearTheChange.html">Hear the change</a></li>
+          <li><a href="MixYourStreet.html">Mix your street</a></li>
+          <li><a href="YourStreet.html">Your street</a></li>
+          <li><a href="AddACall.html">Add a call</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+
+<div class="caption-bar" id="captionBar" aria-live="polite">
+  <div class="inner"><span class="vi" id="capVi"></span><span class="en" id="capEn"></span></div>
+</div>
+
+</div>
+
+<script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/core.js?v=31"></script>
+<script src="js/change.js?v=31"></script>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
    Pick up food at the stall, deliver every order, and come back. The bike only carries a few boxes,
    so on busy nights you have to return to the stall to reload. Shorter routes burn less fuel and earn tips.
    The best possible route is worked out exactly (Held-Karp per trip, then the best way to split orders into trips).
-   Pictures: images/game/stall.png, house.png, scooter.png and map.png; each has a drawn stand-in until it exists. */
+   Pictures: images/game/stall.png, house.png and scooter.png; the map itself is drawn. */
 const {openDelivery, deliveryIsOpen, deliveryKey} = (() => {
   const COLS = 8, ROWS = 5;            // crossings in the neighbourhood grid
   const BLOCK_KM = 0.15;               // one block of alley

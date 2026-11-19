@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Add a Call · Tiếng Rao</title>
+<meta name="description" content="Send in a street-vendor call from your own city.">
+<link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
+<link rel="apple-touch-icon" href="images/brand/favicon-180.png">
+<meta property="og:image" content="images/home/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css?v=31">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to the content</a>
+
+<div class="tr-app" data-bs-theme="dark">
+
+<nav class="navbar navbar-expand-lg tr-nav" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand" href="HomePage.html">Tiếng Rao</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navLinks">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="NightWalk.html">Night walk</a></li>
+        <li class="nav-item"><a class="nav-link" href="HearTheChange.html">Hear the change</a></li>
+        <li class="nav-item"><a class="nav-link" href="MixYourStreet.html">Mix your street</a></li>
+        <li class="nav-item"><a class="nav-link" href="YourStreet.html">Your street</a></li>
+        <li class="nav-item"><a class="nav-link active" href="AddACall.html" aria-current="page">Add a call</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="HomePage.html">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Add a call</li>
+      </ol>
+    </nav>
+    <div class="section-head mb-0">
+      <div>
+        <h1 class="display">Add a call from your city</h1>
+        <p class="lede mb-0">Every city has its own calls, and many have never been recorded. Tell us about one you know: where you heard it, what is being sold and the words of the call.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+<section class="band" aria-label="Send a call">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-7 order-lg-2">
+        <form class="panel needs-validation" id="contribForm" novalidate>
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="cityInput">City or town</label>
+              <input class="form-control" id="cityInput" type="text" required placeholder="e.g. Hải Phòng">
+              <div class="invalid-feedback">Tell us where you heard it.</div>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="dishInput">What is being sold?</label>
+              <input class="form-control" id="dishInput" type="text" required placeholder="e.g. Bánh mì cay">
+              <div class="invalid-feedback">Name the food or service.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="callInput">The call, in Vietnamese</label>
+              <input class="form-control" id="callInput" type="text" required placeholder="e.g. Ai bánh mì cay đây!">
+              <div class="invalid-feedback">Write the words of the call.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="translationInput">English meaning <span class="text-secondary">(optional)</span></label>
+              <input class="form-control" id="translationInput" type="text" placeholder="e.g. Who wants spicy bread sticks?">
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="audioInput">Recording <span class="text-secondary">(optional)</span></label>
+              <input class="form-control" id="audioInput" type="file" accept="audio/*">
+              <div class="form-text">MP3, M4A or WAV. In this prototype the file stays on your device.</div>
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" id="consentCheck" type="checkbox" required>
+                <label class="form-check-label" for="consentCheck">The vendor was happy to be recorded, or the recording has no identifiable people in it.</label>
+                <div class="invalid-feedback">Please confirm before sending.</div>
+              </div>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn btn-lamp" type="submit">Send the call</button>
+              <button class="btn btn-ghost" type="reset">Clear form</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-lg-5 order-lg-1">
+        <h2 class="h4">Calls sent in</h2>
+        <p class="text-secondary">The newest are at the top. The first one is an example.</p>
+        <ul class="sub-list mt-3" id="subList" aria-live="polite"></ul>
+      </div>
+    </div>
+    <aside class="proto-note" role="note"><span class="proto-tag">Prototype note</span><p class="mb-0">In this prototype, sent calls are saved only in this browser and any recording stays on your device. In the final site they would be uploaded, checked by a moderator, and then added to the night walk.</p></aside>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <p class="mb-1"><span class="display" style="color:var(--sodium)">Tiếng Rao</span></p>
+        <p class="mb-0 text-secondary">A sound-map of Vietnam's street-vendor calls · CSCU9X5 prototype, 2026</p>
+      </div>
+      <nav aria-label="Site map">
+        <p class="label mb-2">Site map</p>
+        <ul class="sitemap">
+          <li><a href="HomePage.html">Home</a></li>
+          <li><a href="NightWalk.html">Night walk</a></li>
+          <li><a href="HearTheChange.html">Hear the change</a></li>
+          <li><a href="MixYourStreet.html">Mix your street</a></li>
+          <li><a href="YourStreet.html">Your street</a></li>
+          <li><a href="AddACall.html">Add a call</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="margin-top:calc(64px + env(safe-area-inset-top,0px));margin-right:env(safe-area-inset-right,0px)">
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+    <div class="toast-body" id="toastBody"></div>
+  </div>
+</div>
+
+</div>
+
+<script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/core.js?v=31"></script>
+<script src="js/contribute.js?v=31"></script>
+
+</body>
+</html>

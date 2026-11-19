@@ -88,7 +88,7 @@ function drawGround(){
   }
 }
 
-/* ---------------- Player: a small pixel figure in a nón lá ---------------- */
+/* ---------------- Player: animated frames from images/player/<boy|girl>/, with a drawn stand-in if they're missing ---------------- */
 const PLAYER_PX = [
   "......hh......",
   ".....hHHh.....",
@@ -114,11 +114,30 @@ function playerSvg(){
   const col = {h:"#a8743a", H:"#e8c98a", k:"#2a1a10", s:"#e0b48a", e:"#2a1a10", T:"#55b3a3", P:"#3b4a63"};
   let r = "";
   PLAYER_PX.forEach((row, y) => [...row].forEach((ch, x) => { if (col[ch]) r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${col[ch]}"/>`; }));
-  // Artwork from images/player/ replaces the drawn figure once it exists; riding uses the motorbike picture as a stand-in.
-  return `<img class="pl-art walk" src="images/player/walking.png" alt="">
+  return `<img class="pl-frame" alt="">
     <span class="pl-pixel"><svg viewBox="0 0 14 19" shape-rendering="crispEdges">${r}</svg></span>
-    <span class="pl-ride"><img class="pl-art ride" src="images/player/riding.png" alt=""><span class="pl-stand"><img src="images/ambient/moto.png" alt=""></span></span>
     <span class="you">You</span>`;
+}
+// Which picture to show: front / back / side by the direction you last walked, 4-step walk cycle while moving,
+// 2-frame ride while the bike moves. Side and riding frames face right and are flipped for walking left.
+const SKIN_KEY = "tiengrao.skin";
+const WALK_FPS = 9, RIDE_FPS = 6;
+const look = {skin:"boy", dir:"front", src:""};
+function frameName(now){
+  if (ride.on) return player.moving ? `ride-${1 + Math.floor(now / 1000 * RIDE_FPS) % 2}` : "ride-1";
+  return player.moving ? `${look.dir}-walk-${1 + Math.floor(now / 1000 * WALK_FPS) % 4}` : `${look.dir}-idle`;
+}
+function drawPlayer(now){
+  const src = `images/player/${look.skin}/${frameName(now)}.png`;
+  if (src !== look.src){ look.src = src; playerEl.querySelector(".pl-frame").src = src; }
+  playerEl.classList.toggle("left", player.facing < 0 && (ride.on || look.dir === "side"));
+}
+function setSkin(skin){
+  if (skin === look.skin && look.src) return;
+  look.skin = skin; look.src = ""; store.set(SKIN_KEY, skin);
+  // load every frame up front so the walk cycle doesn't flicker the first time round
+  ["front", "back", "side"].forEach(d => ["idle", "walk-1", "walk-2", "walk-3", "walk-4"].forEach(f => { new Image().src = `images/player/${skin}/${d}-${f}.png`; }));
+  ["ride-1", "ride-2"].forEach(f => { new Image().src = `images/player/${skin}/${f}.png`; });
 }
 
 /* ---------------- Items on the street ---------------- */
@@ -147,6 +166,33 @@ function renderItems(){
     placeItem(t);
   });
   document.getElementById("mixCount").textContent = `${items.length} of ${MAX_ITEMS} sounds on your street.`;
+}
+/* ---------------- Roaming vendors ----------------
+   Vendors who travel walk along the street, stop for a while, and turn round at the edges.
+   Those who sit or stand at a stall stay where they were put. Speeds are world px per second. */
+const ROAM = {hotvitlon:55, che:55, banhmi:110, banhbao:180};   // on foot, bicycle, motorbike
+const rand = (a, b) => a + Math.random() * (b - a);
+function moveVendors(dt, now){
+  items.forEach(t => {
+    const speed = ROAM[t.type];
+    if (!speed || !t.el) return;
+    // stand still while you talk to them, while they're being dragged or have their card open
+    if (t.talking || (drag && drag.t === t) || popItem === t) return;
+    if (!t.roam) t.roam = {dir:Math.random() < .5 ? -1 : 1, moving:Math.random() < .7, until:now + rand(1000, 6000)};
+    const r = t.roam;
+    if (now > r.until){
+      r.moving = !r.moving;
+      r.until = now + (r.moving ? rand(4000, 10000) : rand(2000, 5000));
+      if (!r.moving && Math.random() < .3) r.dir *= -1;   // sometimes turn round while stopped
+    }
+    if (r.moving){
+      t.x += r.dir * speed * dt / W * 100;
+      if (t.x <= 3 || t.x >= 97){ t.x = Math.max(3, Math.min(97, t.x)); r.dir *= -1; }   // reached the edge: turn round
+      placeItem(t);
+    }
+    t.el.classList.toggle("face-left", r.dir < 0);
+    t.el.classList.toggle("roaming", r.moving);
+  });
 }
 function placeItem(t){
   const p = toWorld(t);
@@ -217,9 +263,10 @@ function updateHearing(now){
     t.el.classList.toggle("audible", lv.gain > 0.02);
     t.el.style.setProperty("--lv", lv.gain.toFixed(2));
     if (lv.gain > 0.02) heard.push({t, g:lv.gain});
-    if (t !== ride.bike && lv.d < MEET_DIST && (!nearest || lv.d < nearest.d)) nearest = {t, d:lv.d};
+    const canMeet = t !== ride.bike && !(ride.on && t.type === "moto");   // on the bike you can still talk to vendors
+    if (canMeet && lv.d < MEET_DIST && (!nearest || lv.d < nearest.d)) nearest = {t, d:lv.d};
   });
-  if (busy() || ride.on) nearest = null;   // get off the bike (Esc) before talking to anyone
+  if (busy()) nearest = null;
   items.forEach(t => {
     const on = !!nearest && nearest.t === t;
     t.el.classList.toggle("near", on);
@@ -270,14 +317,16 @@ function frame(now){
     player.x = Math.max(40, Math.min(W - 40, player.x + dx / len * v * dt));
     player.y = Math.max(H * ROOF_LINE / 100, Math.min(H - 8, player.y + dy / len * v * dt));
     if (dx) player.facing = Math.sign(dx);
+    look.dir = Math.abs(dy) > Math.abs(dx) ? (dy < 0 ? "back" : "front") : "side";
     // The bike (and its engine sound) travels with you
     if (ride.on){ ride.bike.x = player.x / W * 100; ride.bike.y = player.y / H * 100; placeItem(ride.bike); }
   }
   playerEl.style.left = player.x + "px"; playerEl.style.top = player.y + "px";
   playerEl.style.zIndex = Math.round(player.y) + 1;
   playerEl.classList.toggle("walking", player.moving);
-  playerEl.classList.toggle("left", player.facing < 0);
+  drawPlayer(now);
   follow();
+  moveVendors(dt, now);
   updateHearing(now);
 }
 
@@ -296,7 +345,7 @@ window.addEventListener("keydown", e => {
   }
   if (!entered || popItem) return;
   if (DIRS[k]){ e.preventDefault(); keys.add(k); }
-  if (k === "e" && !ride.on && meet.item){ e.preventDefault(); interact(meet.item); }
+  if (k === "e" && meet.item){ e.preventDefault(); interact(meet.item); }
   if (k === "f" && (ride.on || (meet.item && meet.item.type === "moto"))){ e.preventDefault(); startDeliveries(); }
   if (ride.on && (k === "q" || k === "r")){ e.preventDefault(); setKmh(ride.kmh + (k === "r" ? 5 : -5)); }
 });
@@ -342,16 +391,18 @@ world.addEventListener("click", e => {
 // E near something: vendors talk, the motorbike gets ridden, other street sounds open the small card.
 function interact(t){
   if (vendorById[t.type] && TALK[t.type]) talkTo(t);
-  else if (t.type === "moto") getOn(t);
+  else if (t.type === "moto"){ if (!ride.on) getOn(t); }
   else openPop(t);
 }
 function talkTo(t){
   keys.clear(); target = null;
   stopItem(t);   // they stop calling out while they talk to you
   t.el.classList.add("talking");
+  t.talking = true;   // a roaming vendor stops until you say goodbye
   lastHear = 0;
   openTalk(t.type, () => {
     t.el.classList.remove("talking");
+    t.talking = false;
     startItem(t); lastHear = 0;
     document.activeElement.blur();
   });
@@ -523,9 +574,24 @@ document.getElementById("btnMixLoad").addEventListener("click", () => {
 
 /* ---------------- Boot ---------------- */
 // How vendors address you in conversation ("Hey pretty!"), remembered on this device.
+// It also picks your look: Pretty plays as the girl, Handsome as the boy, and Friend asks which you are.
 const callMe = store.get("tiengrao.you", "friend");
 (document.querySelector(`#callMe input[value="${callMe}"]`) || document.getElementById("callFriend")).checked = true;
-document.getElementById("callMe").addEventListener("change", e => store.set("tiengrao.you", e.target.value));
+const savedSkin = store.get(SKIN_KEY, null);
+if (savedSkin) document.querySelector(`#skinPick input[value="${savedSkin}"]`).checked = true;
+function syncLook(){
+  const call = document.querySelector("#callMe input:checked").value;
+  const picked = document.querySelector("#skinPick input:checked");
+  document.getElementById("skinAsk").hidden = call !== "friend";
+  if (call === "pretty") setSkin("girl");
+  else if (call === "handsome") setSkin("boy");
+  else if (picked) setSkin(picked.value);
+  // with Friend you have to answer before stepping in
+  document.getElementById("btnEnter").disabled = call === "friend" && !picked;
+}
+document.getElementById("callMe").addEventListener("change", e => { store.set("tiengrao.you", e.target.value); syncLook(); });
+document.getElementById("skinPick").addEventListener("change", syncLook);
+syncLook();
 document.getElementById("btnEnter").addEventListener("click", () => {
   if (!audio()) return;
   entered = true;
@@ -546,8 +612,10 @@ document.getElementById("btnEnter").addEventListener("click", () => {
   save();
 })();
 playerEl.innerHTML = playerSvg();
-playerEl.querySelector(".pl-art.walk").addEventListener("load", () => playerEl.classList.add("has-walk-art"));
-playerEl.querySelector(".pl-art.ride").addEventListener("load", () => playerEl.classList.add("has-ride-art"));
+const plFrame = playerEl.querySelector(".pl-frame");
+plFrame.addEventListener("load", () => playerEl.classList.remove("no-art"));
+plFrame.addEventListener("error", () => playerEl.classList.add("no-art"));   // falls back to the drawn figure
+syncLook();
 setKmh(ride.kmh);
 refreshWallet();
 drawGround(); renderItems(); layout();
