@@ -19,6 +19,7 @@ Google Fonts load from the web when online; offline, the pages fall back to syst
 
 ## Code
 - `css/style.css` – all custom styles and colour tokens
+- `js/sounds.js` – the recordings from `sounds/`, embedded by `tools/embed_sounds.py`
 - `js/core.js` – shared by every page: vendor data, Web Audio sound engine, captions, story panel, page helpers
 - `js/home.js` – home page: skyline drawing, carousel buttons, entrance animation (GSAP)
 - `js/walk.js` – Night walk
@@ -38,6 +39,8 @@ Google Fonts load from the web when online; offline, the pages fall back to syst
 HTML5, CSS3, Bootstrap 5.3.3, JavaScript, Web Audio API, HTML5 Canvas, localStorage, GSAP 3.12.5.
 
 ## Notes
-All sounds are synthesised in the browser as placeholders; each call's melody follows the
-Vietnamese tone marks of its words. The final version will use field recordings or credited
-Creative Commons recordings. Saved mixes and submitted calls are stored only in the browser.
+The six vendor calls are real recordings in `sounds/`. Browsers block loading audio files on
+`file://` pages, so `tools/embed_sounds.py` packs them into `js/sounds.js`; run it again after adding
+or replacing a file in `sounds/`. Any sound without a recording (currently the motorbike, rain,
+temple bell and crickets) is synthesised in the browser instead. Saved mixes and submitted calls
+are stored only in the browser.

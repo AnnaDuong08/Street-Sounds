@@ -99,8 +99,55 @@ function audio(){
 }
 const hz = (base, st) => base * Math.pow(2, st / 12);
 
+/* ---------------- Real recordings (sounds/*.mp3, embedded in js/sounds.js) ----------------
+   Decoded at page load with an OfflineAudioContext (works on file:// and needs no click).
+   Any vendor without a recording falls back to the synthesised call below. */
+const clips = {};
+const CLIP_GAIN = {hotvitlon:0.75, banhmi:1.1, hutieugo:1.15, che:1.05};   // evens out loudness between recordings
+(function loadClips(){
+  const data = window.SOUND_DATA, OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if (!data || !OAC) return;
+  const dec = new OAC(1, 1, 44100);
+  Object.keys(data).forEach(id => {
+    const bin = atob(data[id]), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    dec.decodeAudioData(bytes.buffer, b => { clips[id] = b; }, () => {});
+  });
+})();
+
+/* Loudspeaker colouring: thin, distorted, with a slap-back echo. Returns the node to feed. */
+function speaker(dest, drive, level){
+  const pre = ctx.createGain(); pre.gain.value = drive;
+  const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 650;
+  const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3200;
+  const sh = ctx.createWaveShaper(); const k = 30, n = 1024, curve = new Float32Array(n);
+  for (let i = 0; i < n; i++){ const x = i * 2 / n - 1; curve[i] = (1 + k) * x / (1 + k * Math.abs(x)); }
+  sh.curve = curve;
+  const lvl = ctx.createGain(); lvl.gain.value = level;
+  pre.connect(hp); hp.connect(sh); sh.connect(lp); lp.connect(lvl);
+  const dl = ctx.createDelay(); dl.delayTime.value = 0.13;
+  const fb = ctx.createGain(); fb.gain.value = 0.28;
+  lvl.connect(dl); dl.connect(fb); fb.connect(dl); fb.connect(dest);
+  lvl.connect(dest);
+  return pre;
+}
+
+/* Play a recording. "loud" sends it through the loudspeaker. Returns duration in seconds. */
+function playClip(id, dest, t0, mode){
+  const b = clips[id], g = CLIP_GAIN[id] || 1, end = t0 + b.duration;
+  const s = ctx.createBufferSource(); s.buffer = b;
+  const env = ctx.createGain();
+  env.gain.setValueAtTime(0, t0); env.gain.linearRampToValueAtTime(g, t0 + 0.015);
+  env.gain.setValueAtTime(g, end - 0.03); env.gain.linearRampToValueAtTime(0, end);
+  s.connect(env);
+  env.connect(mode === "loud" ? speaker(dest, 1.2, 0.28) : dest);
+  s.start(t0); s.stop(end);
+  return b.duration;
+}
+
 /* Sing a call. mode "live" = human voice with drift; "loud" = loudspeaker recording. Returns duration in seconds. */
 function sing(v, dest, t0, mode){
+  if (clips[v.id]) return playClip(v.id, dest, t0, mode);
   if (v.clapper) return clap(dest, t0);
   const live = mode !== "loud";
   const syls = syllables(v.call);
@@ -127,21 +174,7 @@ function sing(v, dest, t0, mode){
   src.connect(f1); src.connect(f2); src.connect(body);
   f1.connect(env); f2.connect(g2); g2.connect(env); body.connect(gb); gb.connect(env);
 
-  let out = env;
-  if (!live){
-    const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 650;
-    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3200;
-    const sh = ctx.createWaveShaper(); const k = 30, n = 1024, curve = new Float32Array(n);
-    for (let i = 0; i < n; i++){ const x = i * 2 / n - 1; curve[i] = (1 + k) * x / (1 + k * Math.abs(x)); }
-    sh.curve = curve;
-    const lvl = ctx.createGain(); lvl.gain.value = 0.45;
-    env.connect(hp); hp.connect(sh); sh.connect(lp); lp.connect(lvl);
-    const dl = ctx.createDelay(); dl.delayTime.value = 0.13;
-    const fb = ctx.createGain(); fb.gain.value = 0.28;
-    lvl.connect(dl); dl.connect(fb); fb.connect(dl); fb.connect(dest);
-    out = lvl;
-  }
-  out.connect(dest);
+  env.connect(live ? dest : speaker(dest, 1, 0.45));
 
   const speed = live ? 1 : 0.82;
   const peak = live ? 0.9 : 1;

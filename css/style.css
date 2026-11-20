@@ -307,7 +307,7 @@ kbd{background:var(--paper);color:#1b1206;font-family:var(--f-mono);font-weight:
   background:radial-gradient(circle,color-mix(in srgb,var(--vc) 55%,#fff) 0 58%,color-mix(in srgb,var(--vc) 30%,#fff) 59%);box-shadow:0 0 0 6px rgba(27,18,6,.06)}
 .item-img.big{width:130px;height:130px}
 .item-img.big.missing .ph{color:#3a2313;border-color:rgba(58,35,19,.4)}
-.stock-pill{background:#1b1206;color:var(--paper);font-family:var(--f-mono);font-size:.78rem;border-radius:999px;padding:3px 12px}
+.stock-pill{background:#1b1206;color:#f1e7d0;font-family:var(--f-mono);font-size:.78rem;border-radius:999px;padding:3px 12px}
 .buy-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1px solid rgba(27,18,6,.15);padding-bottom:8px;margin-bottom:10px}
 .restock{font-family:var(--f-mono);font-size:.75rem;color:#6b4a30;white-space:nowrap}
 .buy-desc{margin-bottom:6px;font-weight:500}
@@ -572,10 +572,6 @@ body.in-talk .caption-bar{display:none}
 .page-head .breadcrumb{--bs-breadcrumb-divider-color:var(--muted);--bs-breadcrumb-item-active-color:var(--muted);font-size:.85rem;margin-bottom:12px}
 .page-head .breadcrumb a{color:var(--paper)}
 
-/* a clearly marked note wherever the prototype differs from the final site */
-.proto-note{display:flex;gap:12px;align-items:flex-start;margin-top:22px;padding:12px 16px;border:1px dashed rgba(245,160,67,.6);border-radius:8px;background:rgba(245,160,67,.07);font-size:.9rem}
-.proto-tag{flex:none;font-family:var(--f-mono);font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#1b1206;background:var(--sodium);border-radius:4px;padding:2px 8px;margin-top:2px}
-.skin-panel .proto-note{border-color:rgba(58,35,19,.45);background:rgba(58,35,19,.06)}
 
 /* home: meet-the-vendors carousel */
 .vendor-carousel{background:var(--night-2);border:1px solid var(--line);border-radius:10px;padding:24px 64px 44px}

@@ -252,14 +252,16 @@ function levelOf(t){
   return {gain:near * near, pan:Math.max(-1, Math.min(1, dx / (r * 0.6))), cutoff:500 + near * 16000, d};
 }
 let lastHear = 0;
+const TALK_DUCK = 0.04;   // about -28 dB: still there, but only just
 function updateHearing(now){
   if (now - lastHear < 120) return;
   lastHear = now;
   const heard = [];
   let nearest = null;
+  const duck = items.some(t => t.talking) ? TALK_DUCK : 1;   // the street goes almost silent while you talk to a vendor
   items.forEach(t => {
     const lv = levelOf(t);
-    if (nodes[t.uid]) nodes[t.uid].bus.set(lv.gain, lv.pan, lv.cutoff);
+    if (nodes[t.uid]) nodes[t.uid].bus.set(lv.gain * duck, lv.pan, lv.cutoff);
     t.el.classList.toggle("audible", lv.gain > 0.02);
     t.el.style.setProperty("--lv", lv.gain.toFixed(2));
     if (lv.gain > 0.02) heard.push({t, g:lv.gain});
