@@ -31,6 +31,7 @@ Google Fonts load from the web when online; offline, the pages fall back to syst
 - `js/talk.js` – the conversation box
 - `js/shop.js` – the vendor shop, wallet and nightly stock
 - `js/delivery.js` – Delivery runs route-planning game
+- `js/tutorial.js` – the one-time guided tutorial on Your street (progress saved, resumable) and the Tutorials library; pictures in `images/tutorial/`
 - `lib/bootstrap/` – Bootstrap 5.3.3 (CSS and JS bundle)
 - `lib/gsap/` – GSAP 3.12.5
 - `images/` – all artwork (vendors, portraits, food, player frames, icons, UI frames)

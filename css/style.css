@@ -611,3 +611,110 @@ footer{padding:36px 0 120px;border-top:1px solid var(--line)}
   .vendor-carousel .carousel-control-prev,.vendor-carousel .carousel-control-next{display:none}
   .footer-grid{grid-template-columns:1fr}
 }
+
+/* ---------------- Tutorials (tutorial.js) ---------------- */
+/* coach card: top centre over the street; moves to the bottom-left corner while a shop, bag or delivery panel is open */
+.tut-coach{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:50;width:min(440px,calc(100% - 24px));
+  background:rgba(14,34,51,.96);border:2px solid var(--sodium);border-radius:10px;padding:10px 14px 12px;box-shadow:0 14px 36px rgba(0,0,0,.5)}
+.tut-coach[hidden]{display:none}
+/* while you talk, it moves to the top left so the reply list stays clear */
+.tut-coach.left{left:12px;transform:none;width:min(400px,calc(100% - 24px))}
+/* while a shop, your bag or delivery runs is open it becomes a slim strip, and the panel moves down to make room */
+.tut-coach.strip{top:8px;width:min(1100px,calc(100% - 24px));display:flex;align-items:center;gap:14px;padding:8px 10px 8px 14px}
+.tut-coach.strip .tut-top{flex:none;order:2}
+.tut-coach.strip .tut-body{flex:1;display:flex;align-items:center;gap:14px;min-width:0}
+.tut-coach.strip .tut-title,.tut-coach.strip .tut-dots,.tut-coach.strip .tut-bar{display:none}
+.tut-coach.strip .tut-text{flex:1;margin:0;font-size:.9rem}
+.tut-coach.strip .tut-actions{flex:none;flex-wrap:nowrap}
+.tut-coach.strip.min{width:auto}
+.tut-coach.strip .tut-top .label{display:none}
+body.tut-running .shop,body.tut-running .deliver{padding-top:96px}
+.tut-top{display:flex;align-items:center;gap:8px}
+.tut-top .label{color:var(--sodium)}
+.tut-min{margin-left:auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--paper);font-weight:700;line-height:1}
+.tut-min:hover{background:var(--night-3)}
+.tut-coach.min{width:auto;padding:6px 8px 6px 14px}
+.tut-coach.min .tut-body{display:none}
+.tut-title{font-size:1.1rem;font-weight:700;margin:4px 0 4px}
+.tut-text{font-size:.95rem;margin:0 0 8px}
+.tut-text kbd{font-size:.8rem}
+.tut-bar{height:6px;border-radius:3px;background:rgba(241,231,208,.14);overflow:hidden;margin-bottom:8px}
+.tut-bar i{display:block;height:100%;width:0;background:var(--sodium);transition:width .2s}
+.tut-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tut-actions .btn-link{color:var(--muted);padding-left:4px;padding-right:4px}
+.tut-dots{display:flex;justify-content:center;gap:7px;list-style:none;margin:0 0 8px;padding:0}
+.tut-dots:empty{display:none}
+.tut-dots li{width:9px;height:9px;border-radius:50%;border:1.5px solid currentColor;opacity:.55}
+.tut-dots li.past{background:currentColor;opacity:.55}
+.tut-dots li.now{background:currentColor;opacity:1}
+.tut-coach .tut-dots{color:var(--sodium);justify-content:flex-start}
+
+/* the glow on whatever the tutorial wants you to press */
+.tut-glow{animation:tutGlow .9s ease-in-out infinite alternate}
+@keyframes tutGlow{from{box-shadow:0 0 0 2px #f5a043,0 0 8px 2px rgba(245,160,67,.45)}to{box-shadow:0 0 0 4px #f5a043,0 0 26px 8px rgba(245,160,67,.8)}}
+.sprite.tut-glow{animation:none}
+.sprite.tut-glow img{filter:drop-shadow(0 0 8px #f5a043) drop-shadow(0 0 20px rgba(245,160,67,.85))!important}
+.sprite.tut-glow::before{content:"";position:absolute;left:50%;bottom:calc(100% + 46px);margin-left:-16px;border:16px solid transparent;border-top:22px solid #f5a043;
+  filter:drop-shadow(0 3px 0 rgba(0,0,0,.4));animation:tutBob .6s ease-in-out infinite alternate;pointer-events:none}
+@keyframes tutBob{to{translate:0 10px}}
+@media (prefers-reduced-motion:reduce){.tut-glow,.sprite.tut-glow::before{animation:none}.tut-glow{box-shadow:0 0 0 4px #f5a043,0 0 20px 6px rgba(245,160,67,.7)}}
+
+/* welcome and "are you sure?" */
+.tut-modal{position:absolute;inset:0;z-index:60;display:grid;place-items:center;padding:16px;overflow:auto;background:rgba(6,16,26,.62);backdrop-filter:blur(4px)}
+.tut-modal[hidden]{display:none}
+.tut-card{width:min(460px,100%)}
+.tut-plan{columns:2;column-gap:24px;margin:0 0 18px;padding-left:1.3em}
+.tut-plan li{margin-bottom:2px}
+
+/* Tutorials library: topic tabs, a searchable list on the left, pages with pictures on the right */
+.tut-lib{position:fixed;inset:0;z-index:1050;display:grid;place-items:center;padding:16px;background:rgba(6,16,26,.72);backdrop-filter:blur(4px);overflow:auto}
+.tut-lib[hidden]{display:none}
+.tut-lib-panel{width:min(1120px,100%);max-height:100%;overflow:auto;background:radial-gradient(ellipse at 10% 0%,#1b3a55 0%,#0c1d2c 60%);
+  border:1px solid var(--line);border-radius:12px;padding:18px 22px 22px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.tut-lib-head{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.tut-lib-head .label{color:var(--sodium)}
+.tut-lib-badge{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--paper);box-shadow:0 0 0 4px rgba(241,231,208,.15)}
+.tut-lib-badge img{width:30px;height:30px}
+.tut-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:2px solid var(--line);margin-bottom:16px}
+.tut-tabs button{flex:none;background:none;border:0;color:var(--muted);font-weight:700;padding:8px 14px;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tut-tabs button:hover{color:var(--paper)}
+.tut-tabs button[aria-selected=true]{color:var(--paper);border-bottom-color:var(--paper)}
+.tut-lib-body{display:grid;grid-template-columns:minmax(260px,340px) minmax(0,1fr);gap:22px;align-items:start}
+.tut-search{border-radius:999px;padding-left:16px;margin-bottom:12px}
+.tut-list{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:420px;overflow:auto}
+.tut-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:rgba(241,231,208,.05);color:var(--paper);
+  border:0;border-left:5px solid rgba(241,231,208,.3);border-radius:2px;padding:14px 16px;font-size:1.02rem;font-weight:500}
+.tut-item:hover{background:rgba(241,231,208,.1)}
+.tut-item.active{background:#f1e7d0;color:#1b1206;border-left-color:var(--sodium);font-weight:700;box-shadow:0 0 0 2px rgba(241,231,208,.4)}
+.tut-item span{flex:1}
+.tut-done{width:20px;height:20px}
+.tut-none{color:var(--muted);padding:8px 2px}
+.tut-detail{background:#f1e7d0;color:#3a2313;border-radius:6px;padding:22px 26px 24px;text-align:center}
+.tut-detail.has-shot{background-image:linear-gradient(#1a2b3a 0 120px,transparent 120px)}
+.tut-detail[hidden]{display:none}
+.tut-shot{margin:0 auto 14px;max-width:560px;border:4px solid #e3d5b5;box-shadow:0 8px 22px rgba(0,0,0,.35);background:#0a1926}
+.tut-shot[hidden]{display:none}
+.tut-shot img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.tut-d-title{font-family:var(--f-display);font-size:1.4rem;color:#3a2313;margin:0 0 8px}
+.tut-d-text{max-width:60ch;margin:0 auto 12px;font-size:1.02rem}
+.tut-d-text kbd{font-size:.82rem;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.tut-detail .tut-dots{color:#3a2313}
+.tut-pager{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.btn-pill{min-width:150px;border-radius:999px;border:1.5px solid rgba(58,35,19,.35);background:transparent;color:#3a2313;font-weight:700}
+.btn-pill:hover{background:rgba(58,35,19,.08);color:#3a2313}
+#tutNextPg{background:#fff;border-color:#fff;box-shadow:0 2px 8px rgba(58,35,19,.2)}
+.btn-pill:disabled{opacity:.4;border-color:rgba(58,35,19,.25)}
+.tut-try-note{font-size:.85rem;color:#7a5c40;margin-top:6px}
+#tutTry{max-width:420px;margin-left:auto;margin-right:auto;display:block}
+@media (max-width:760px){
+  .tut-lib{padding:8px}
+  .tut-lib-panel{padding:14px}
+  .tut-lib-body{grid-template-columns:1fr}
+  .tut-list{max-height:none;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .tut-detail{padding:16px}
+  .tut-detail.has-shot{background-image:linear-gradient(#1a2b3a 0 80px,transparent 80px)}
+  .tut-plan{columns:1}
+  .tut-coach.strip{flex-wrap:wrap}
+  .tut-coach.strip .tut-body{flex-wrap:wrap}
+  body.tut-running .shop,body.tut-running .deliver{padding-top:150px}
+}

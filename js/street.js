@@ -27,7 +27,9 @@ const keys = new Set();
 let target = null;          // tap-to-walk destination
 let entered = false;        // sound starts when the visitor steps in
 let popItem = null;
-const busy = () => !!popItem || talkIsOpen() || deliveryIsOpen() || !bagBox.hidden;   // a card, conversation, game or your bag is open, so the player stands still
+// A tutorial window (welcome, confirm or the Tutorials library, in tutorial.js) also holds the player still.
+const tutorialBlocks = () => typeof tutorialModalOpen === "function" && tutorialModalOpen();
+const busy = () => !!popItem || talkIsOpen() || deliveryIsOpen() || !bagBox.hidden || tutorialBlocks();   // a card, conversation, game or your bag is open, so the player stands still
 const bagBox = document.getElementById("bag");
 const meet = {item:null};   // the item the E key would open
 const nodes = {};           // uid -> {bus, sound}
@@ -336,7 +338,7 @@ function frame(now){
 const typing = () => { const a = document.activeElement; return a && (a.tagName === "TEXTAREA" || (a.tagName === "INPUT" && !["range", "radio", "checkbox", "button"].includes(a.type))); };
 const storyOpen = () => document.getElementById("storyPanel").classList.contains("show");
 window.addEventListener("keydown", e => {
-  if (typing() || storyOpen()) return;
+  if (typing() || storyOpen() || tutorialBlocks()) return;
   if (!bagBox.hidden){ if (e.key === "Escape"){ e.preventDefault(); closeBag(); } return; }
   if (talkIsOpen()){ talkKey(e); return; }
   if (deliveryIsOpen()){ deliveryKey(e); return; }
@@ -486,6 +488,7 @@ document.getElementById("rideRange").addEventListener("change", e => e.target.bl
 document.getElementById("rideSlower").addEventListener("click", e => { setKmh(ride.kmh - 5); e.currentTarget.blur(); });
 document.getElementById("rideFaster").addEventListener("click", e => { setKmh(ride.kmh + 5); e.currentTarget.blur(); });
 document.getElementById("rideOff").addEventListener("click", e => { getOff(); e.currentTarget.blur(); });
+document.getElementById("rideDeliver").addEventListener("click", e => { e.currentTarget.blur(); startDeliveries(); });
 
 /* Delivery runs (game in delivery.js); earnings go to the shop wallet */
 function startDeliveries(){

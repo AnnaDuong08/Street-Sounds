@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
-<link rel="stylesheet" href="css/style.css?v=35">
+<link rel="stylesheet" href="css/style.css?v=36">
 </head>
 <body class="street-page">
 
@@ -33,6 +33,7 @@
     </div>
     <span class="street-title">Your street</span>
     <div class="d-flex gap-2 ms-auto">
+      <button class="btn btn-sm btn-ghost" id="btnTutorials" type="button" aria-controls="tutLib" aria-label="Tutorials"><img class="ico" src="images/icons/learn.png" alt=""><span class="bag-label">Tutorials</span></button>
       <button class="btn btn-sm btn-ghost bag-btn" id="btnBag" type="button" aria-controls="bag">
         <img class="ico" src="images/icons/bag.png" alt=""><span class="bag-label">My bag</span>
         <span class="bag-count" id="bagCount" aria-label="items">0</span>
@@ -115,7 +116,8 @@
       <input class="qty-range" id="rideRange" type="range" min="10" max="40" step="5" value="20" aria-label="Speed in km/h">
       <button class="step" id="rideFaster" type="button" aria-label="Faster">+</button>
     </div>
-    <p class="ride-keys mb-2"><kbd>Q</kbd> slower · <kbd>R</kbd> faster · <kbd>Esc</kbd> get off</p>
+    <p class="ride-keys mb-2"><kbd>Q</kbd> slower · <kbd>R</kbd> faster · <kbd>F</kbd> deliveries · <kbd>Esc</kbd> get off</p>
+    <button class="btn btn-sm btn-lamp w-100 mb-2" id="rideDeliver" type="button"><img class="ico" src="images/icons/delivery.png" alt=""> Delivery runs</button>
     <button class="btn btn-sm btn-ghost w-100" id="rideOff" type="button">Get off</button>
   </div>
 
@@ -228,6 +230,50 @@
     </div>
   </div>
 
+  <section class="tut-coach" id="tutCoach" aria-labelledby="tutTitle" hidden>
+    <div class="tut-top">
+      <p class="label mb-0" id="tutStepLabel"></p>
+      <button class="tut-min" id="tutMin" type="button" aria-expanded="true" aria-controls="tutBody" aria-label="Minimise the tutorial">–</button>
+    </div>
+    <div class="tut-body" id="tutBody">
+      <h2 class="tut-title" id="tutTitle"></h2>
+      <p class="tut-text" id="tutText" aria-live="polite"></p>
+      <div class="tut-bar" id="tutBar" hidden><i></i></div>
+      <ol class="tut-dots" id="tutDotsRun" aria-hidden="true"></ol>
+      <div class="tut-actions">
+        <button class="btn btn-sm btn-ghost" id="tutSkipStep" type="button">Skip this step</button>
+        <button class="btn btn-sm btn-link" id="tutSkipAll" type="button">Skip tutorial</button>
+        <button class="btn btn-sm btn-lamp ms-auto" id="tutNext" type="button" hidden>Next step</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="tut-modal" id="tutWelcome" role="dialog" aria-modal="true" aria-labelledby="tutWelcomeTitle" hidden>
+    <div class="tut-card skin-panel">
+      <p class="label mb-1">Tutorial</p>
+      <h2 class="display h4" id="tutWelcomeTitle">New to the street?</h2>
+      <p>A short guided tutorial shows you how everything works. You do each step yourself, and the button you need will glow. It takes about three minutes.</p>
+      <ol class="tut-plan">
+        <li>Walk around</li><li>Ride the motorbike</li><li>Talk to a vendor</li><li>Earn money with delivery runs</li><li>Buy something</li><li>Look in your bag</li>
+      </ol>
+      <div class="d-grid gap-2">
+        <button class="btn btn-lamp" id="tutStart" type="button">Play the tutorial</button>
+        <button class="btn btn-ghost" id="tutWelcomeSkip" type="button">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tut-modal" id="tutConfirm" role="alertdialog" aria-modal="true" aria-labelledby="tutConfirmTitle" aria-describedby="tutConfirmText" hidden>
+    <div class="tut-card skin-panel">
+      <h2 class="display h5" id="tutConfirmTitle">Skip the tutorial?</h2>
+      <p id="tutConfirmText">Are you sure you already know how to walk, ride, talk to vendors, earn money, buy food and check your bag? You can open it again any time from <b>Tutorials</b> in the top bar.</p>
+      <div class="d-grid gap-2">
+        <button class="btn btn-lamp" id="tutKeep" type="button">No, keep the tutorial</button>
+        <button class="btn btn-ghost" id="tutSkipYes" type="button">Yes, I know how. Skip it</button>
+      </div>
+    </div>
+  </div>
+
   <div class="intro" id="intro">
     <div class="intro-card panel skin-panel">
       <h1 class="display h3">Your street at night</h1>
@@ -307,6 +353,53 @@
   </div>
 </div>
 
+<div class="tut-lib" id="tutLib" role="dialog" aria-modal="true" aria-labelledby="tutLibTitle" hidden>
+  <div class="tut-lib-panel">
+    <header class="tut-lib-head">
+      <span class="tut-lib-badge" aria-hidden="true"><img src="images/icons/learn.png" alt=""></span>
+      <div class="me-auto">
+        <p class="label mb-0">Tutorials</p>
+        <h2 class="display h4 mb-0" id="tutLibTitle">All</h2>
+      </div>
+      <button class="shop-x" id="tutLibClose" type="button" aria-label="Close tutorials"><img class="ico" src="images/icons/close.png" alt=""></button>
+    </header>
+    <div class="tut-tabs" id="tutTabs" role="tablist" aria-label="Tutorial topics">
+      <button type="button" role="tab" data-cat="all" aria-selected="true">All</button>
+      <button type="button" role="tab" data-cat="moving" aria-selected="false">Getting around</button>
+      <button type="button" role="tab" data-cat="vendors" aria-selected="false">Vendors</button>
+      <button type="button" role="tab" data-cat="money" aria-selected="false">Money</button>
+      <button type="button" role="tab" data-cat="street" aria-selected="false">Your street</button>
+    </div>
+    <div class="tut-lib-body">
+      <div class="tut-lib-left">
+        <label class="visually-hidden" for="tutSearch">Search tutorials</label>
+        <input class="form-control tut-search" id="tutSearch" type="search" placeholder="Search tutorials" autocomplete="off">
+        <ul class="tut-list" id="tutList" aria-label="Tutorials"></ul>
+        <button class="btn btn-sm btn-ghost w-100 mt-2" id="tutReplay" type="button">Replay the guided tutorial from the start</button>
+      </div>
+      <article class="tut-detail" id="tutDetail" aria-live="polite">
+        <figure class="tut-shot"><img id="tutImg" alt=""></figure>
+        <h3 class="tut-d-title" id="tutDTitle"></h3>
+        <p class="tut-d-text" id="tutDText"></p>
+        <ol class="tut-dots" id="tutDots" aria-hidden="true"></ol>
+        <p class="visually-hidden" id="tutPageSr"></p>
+        <div class="tut-pager">
+          <button class="btn btn-pill" id="tutPrev" type="button">Previous</button>
+          <button class="btn btn-pill" id="tutNextPg" type="button">Next</button>
+        </div>
+        <button class="btn btn-lamp w-100 mt-2" id="tutTry" type="button">Practise this on the street</button>
+        <p class="tut-try-note mb-0" id="tutTryNote"></p>
+      </article>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="margin-top:calc(56px + env(safe-area-inset-top,0px));z-index:1060">
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+    <div class="toast-body" id="toastBody"></div>
+  </div>
+</div>
+
 <div class="caption-bar" id="captionBar" aria-live="polite">
   <div class="inner"><span class="vi" id="capVi"></span><span class="en" id="capEn"></span></div>
 </div>
@@ -315,13 +408,14 @@
 
 <script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
 <!-- ?v= makes browsers fetch fresh copies after an update; bump it when these files change -->
-<script src="js/sounds.js?v=35"></script>
-<script src="js/core.js?v=35"></script>
-<script src="js/talk-script.js?v=35"></script>
-<script src="js/shop.js?v=35"></script>
-<script src="js/delivery.js?v=35"></script>
-<script src="js/talk.js?v=35"></script>
-<script src="js/street.js?v=35"></script>
+<script src="js/sounds.js?v=36"></script>
+<script src="js/core.js?v=36"></script>
+<script src="js/talk-script.js?v=36"></script>
+<script src="js/shop.js?v=36"></script>
+<script src="js/delivery.js?v=36"></script>
+<script src="js/talk.js?v=36"></script>
+<script src="js/street.js?v=36"></script>
+<script src="js/tutorial.js?v=36"></script>
 
 </body>
 </html>
